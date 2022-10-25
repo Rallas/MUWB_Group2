@@ -1,0 +1,10 @@
+package com.mycompany.app;
+
+public class ServerEvent {
+    Person YouAre; // Either an XPLAYER or a YPLAYER
+    int GameId;
+    
+}
+
+//THIS CLASS IS POORLY UNDERSTOOD AND MAY BE REFACTORED OR REMOVED LATER TO MATCH THE CLASS DIAGRAM AND SPECIFICATIONS. 
+//IT IS ONLY PRESENT TO ENSURE MINIMAL WORKING STATE.
