@@ -63,8 +63,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class App extends WebSocketServer {
-  // All games currently underway on this server are stored in
-  // the vector ActiveGames
+  // All games currently underway on this server are stored in the vector ActiveGames
   Vector<GameState> ActiveGames = new Vector<GameState>();
 
   int GameId = 1;
@@ -194,14 +193,14 @@ public class App extends WebSocketServer {
   public static void main(String[] args) {
 
     // Set up the http server
-    int port = 9080;
+    int port = 9082;                                    //updated to the Group 2 ports
     HttpServer H = new HttpServer(port, "./html");
     H.start();
     System.out.println("http Server started on port:" + port);
 
     // create and start the websocket server
 
-    port = 9880;
+    port = 9882;                                        //updated to the Group 2 ports
     App A = new App(port);
     A.start();
     System.out.println("websocket Server started on port: " + port);

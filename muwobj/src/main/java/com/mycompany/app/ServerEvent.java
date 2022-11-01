@@ -1,7 +1,7 @@
 package com.mycompany.app;
 
 public class ServerEvent {
-    Person YouAre; // Either an XPLAYER or a YPLAYER
+    Person YouAre; // either an Player # or the Dealer
     int GameId;
     
 }
