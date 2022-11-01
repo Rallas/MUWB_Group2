@@ -50,7 +50,6 @@ public class HttpServer {
         } catch (Exception e) {
             System.err.println("error: " + e);
         }
-        //I believe we can use readily use this & our App class to run our game -JM
     }
 
 }

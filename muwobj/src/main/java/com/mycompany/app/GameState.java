@@ -10,10 +10,10 @@ public class GameState {
     //in json format, with the host using the  ID to manage multiple games with multiple players
     //This means any given game can be represented by a json of this class
     public Person CurrentTurn;
-    public String[] Msg;
+    public String[] Msg = new String [2];
 
     //Reads in the game state, calls players to play until they stand or bust. checks if the participant is a player, bot, or dealer before calling logic
-    public static int Update(UserEvent U)
+   /*  public static int Update(UserEvent U)
     {
         GameState(){
             participants = new Person[2];               //I added this to get a working model
@@ -27,7 +27,7 @@ public class GameState {
 
         System.out.println("The user event is " + U.PlayerIdx + "  " + U.Button);
 
-        /*if ((CurrentTurn == U.PlayerIdx) && (CurrentTurn == PlayerType.OPLAYER || CurrentTurn == PlayerType.XPLAYER)) {
+        if ((CurrentTurn == U.PlayerIdx) && (CurrentTurn == PlayerType.OPLAYER || CurrentTurn == PlayerType.XPLAYER)) {
             // Move is legitimate, lets do what was requested
 
             // Is the button not taken by X or O?
@@ -62,9 +62,9 @@ public class GameState {
                 Msg[1] = "Draw";
                 CurrentTurn = PlayerType.NOPLAYER;
             }
-        }*/
+        }
         return 0;
-    }
+    }*/
 
     public static int setHand()
     {
@@ -85,7 +85,7 @@ public class GameState {
         return 0;
     }
 
-    public static int StartGame(Person participants[])
+    public int StartGame(Person participants[])
     {
         //starts the gameloop
         Msg[0] = "You are Player 1. Your turn";

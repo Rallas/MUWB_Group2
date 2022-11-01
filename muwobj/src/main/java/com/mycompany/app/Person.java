@@ -2,12 +2,11 @@ package com.mycompany.app;
 
 public class Person extends Actions{
     //class that defines the players and dealer. Varient of the type-object pattern
-    int type = -1; //player (1) or dealer (0). int to allow for possibility of multiple player types.
-    Card hand[]; //stores cards. array to facilitate looping. position indicates value.
+    int type; //player (1) or dealer (0). int to allow for possibility of multiple player types.
+    Card hand[] = new Card[5]; //stores cards. array to facilitate looping. position indicates value.
     Card splitHand[]; //for split actions
-    int wager;
+    int wager = 0;
 
-    hand = new Card[3];
 
     Person(){
         this.type = 1;
@@ -15,8 +14,8 @@ public class Person extends Actions{
         this.hand[1] = new Card();
     }
 
-    Person(int tip){
-        this.type = tip;
+    Person(int tipe){
+        this.type = tipe;
         this.hand[0] = new Card();
         this.hand[1] = new Card();
     }
