@@ -1,0 +1,45 @@
+body{
+    margin: 0;
+    padding: 0px;
+}
+body{
+    margin: 0;
+    padding: 0px;
+}
+
+h1{
+}
+
+.top-container {
+    background-color: white;
+}
+
+.middle-container{
+
+}
+
+.bottom-container{
+}
+
+.card-container{
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+}
+
+.card-item{
+    width: 200px;
+    margin: 10px;
+    border: 3px solid black;
+    background-color: #dfdfdf;
+}
+
+.card1{
+    min-height: 100px;
+}
+.card2{
+    min-height: 200px;
+}
+.card3{
+    min-height: 300px;
+}

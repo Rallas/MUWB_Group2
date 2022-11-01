@@ -50,7 +50,6 @@ public class HttpServer {
         } catch (Exception e) {
             System.err.println("error: " + e);
         }
-
     }
 
 }
