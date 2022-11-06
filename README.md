@@ -33,6 +33,8 @@ Class declarations:
         Notes: - has enums for both Suite & Value
                 - has a random card generator in the constructor
 
+        CardBank: Generates decks per a given hardcoded value. Should prolly be merged with Card later. - JM
+
     Person extends Actions:
             int type; 1 for players (default), 0 for dealer
             Card hand[];      - Hardcoded to an array of 5 atm
@@ -57,6 +59,8 @@ Class declarations:
                 int packageAndPrint(Person participants[])
                 int StartGame(Person participants[])
                 //int Update (UserEvent U) needs to be refactored
+
+        PlayerType: an enum of [DEALER, PLAYER, SPECTATOR]; It is likely needed to get a working prototype for now
 
     
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+	<meta charset="utf-8">
+
+	<title>
+		G2s Current Game State
+	</title>
+	<link rel="stylesheet" href="styles.css">
+    <script type = "text/javascript" src = "g2muwb.js"></script>
+</head>
+
+<label id="topMessage"></label>
+
+<body>
+	<div id = "mainbanner" class = "top-container" style = "float:left; width: 100%;">			
+				<span style= "font-family: calibri, snas-serif; font-size:16 pt; line-height:16 px; text-align:center; border-bottom: 1px solid grey;">				
+					<h2>If you can't get it to deploy to your link try this:</h2>
+	<h3>		- Update the HTML page w/ the port listed for your group on the MUWB doc (this page needs the Websocket Port)</h3>
+	<h3>		- Update the App class (the Websocket port should match the HTML doc & the HTTP port also needs to be corrected)	</h3>
+
+	<h4>Doing this & running to the given bash script as given in the module should let you deploy the sample TicTacToe game to the server and map it to your group's hyperlink
+	Note that you will need to type your group number @ the end of the bash script terminal command (i.e. bash scripts/deploy.bash group#) </h4>
+					<hr>
+					<h3>WebPoker.info:9082</h3>																				<!--This is the Webpage URL: Ripped off the Office Depot website-->
+				</span>	
+			</div>
+		</div>
+	</div>
+
+ 
+
+
+	<div class = "middle-container">
+
+		<div style = "background-color:rgb(199, 200, 103); height:330px; width: 20%; float:left;">
+            <div id="TurnInfo"><b><center>Turn</center></b></div>
+			<hr>
+            Player 1: P1 card count object<br />
+            Player 2: P2 card count object<br />				<!--Other player & Dealer Counts and Card info for the current round-->
+			Player 3: P3 card count object<br />
+            Player 4: P4 card count object<br />
+			Dealer: Dealer card count object
+         </div>
+			
+         <div id = "DealersCards" style = "background-color:#c57373; height:330px; width:60%; float:left;" >
+				<center>
+				   The Dealers Current Hand		<br>															<!--The Dealers Hand: requires card objects layed out below w/ 1 card being hidden-->
+                   <canvas id = "mycanvas" width = "10px" height = "180px" />   </canvas>
+                   <img id = "html5" src="HiddenCard.jpg" alt="Did not work"/>
+                   <img id = "html5" src="c2.jpg" alt="Did not work"/>
+				</center>
+			 </div>		
+		
+         <div id = "Actions" style = "background-color:rgb(129, 68, 156); height:330px; width:20%; float:right;">
+            <div><b>Action Panel</b></div>
+            <input type="button" value = "STAND" id = "STANDB" onclick=buttonclick(0)></input><br />
+            <input type="button" value = "HIT" id = "HITB" onclick=buttonclick(1)></input><br />
+            <input type="button" value = "SPLIT PAIRS" id = "SPLITPAIRSB" onclick=buttonclick(2)></input><br />
+			<input type="button" value = "DOUBLE DOWN" id = "DOUBLEDOWNB" onclick=buttonclick(3)></input><br />
+            <input type="button" value = "SURRENDER" id = "SURRENDERB" onclick=buttonclick(4)></input><br />
+         </div>
+	</div>
+
+	<div class = "bottom-container">
+		<div id = "PlayersCards" style = "background-color:#b3d0dc; height: 200px; clear:both">
+            <center>
+               Your Player's Hand <br>																	
+			   <canvas id = "playershand" width = "10px" height = "180px" />   </canvas>
+			   <img id = "html5" src="AceDi.jpg" alt="Did not work"/>
+			   <img id = "html5" src="3Sp.jpg" alt="Did not work"/>
+			</center>
+         </div>
+		 <div id = "PlayersHash" style = "background-color:#aaa; height:auto; width: 20%; float:left;">
+            <div><b>Player's Current Hash</b></div>
+			<hr>
+            Current Hash Object<br />				<!--For the Players current "Hash"-->
+         </div>
+			
+         <div id = "CurrentBet" style = "background-color:#eee; height:auto; width:60%; float:left;" >
+			<center>Player's Current Bet
+			<hr>
+			Current Bet Object<br /></center>	<!--This will need to be modified -->
+         </div>
+		
+         <div id = "TotalHoldings" style = "background-color:#aaa; height:auto; width:20%; float:right;">
+            <div><b>Player's Total Holdings</b></div>
+			<hr>
+            Make it rain<br />
+         </div>
+	</div>
+   
+</body>
+
+<footer>
+	
+</footer>
