@@ -1,7 +1,11 @@
 # MUWB_Group2
 A small, multi-user web-based blackjack (21) game played in the browser
 
-Compile Status: Does not compile
+Compile Status: Compiles
+                mvn clean
+                mvn compile
+                mvn package
+                mvn exec:java -Dexec.mainClass=com.my.company.app.App        
 
 Class declarations:
     UserEvent:  int GameId;
@@ -31,15 +35,17 @@ Class declarations:
             public Value value;
 
         Notes: - has enums for both Suite & Value
-                - has a random card generator in the constructor
+                - has a random card generator in the constructor (lower limit needs to be removed from both uses or else it will go out of range)
 
-        CardBank: Generates decks per a given hardcoded value. Should prolly be merged with Card later. - JM
+        CardBank: Generates decks per a given hardcoded value. May be merged with Card later. - JM
 
     Person extends Actions:
-            int type; 1 for players (default), 0 for dealer
+            PlayerType type;    -Currently can be: DEALER, PLAYER, SPECTATOR
             Card hand[];      - Hardcoded to an array of 5 atm
             Card splitHand[];
             int wager;
+            
+            functions: Constructors, set & get wager & a custom gethand() function (returns a String)
     
     Actions: int Deal (Card deck[], Card bank[])
                 int Hit (Card deck[], Card bank[])
@@ -56,8 +62,8 @@ Class declarations:
 
                 int setHand()
                 int count(Card deck[])
-                int packageAndPrint(Person participants[])
-                int StartGame(Person participants[])
+                int packageAndPrint(Person participants[])              //prints Player & Dealer cards atm
+                int StartGame(Person participants[])                   
                 //int Update (UserEvent U) needs to be refactored
 
         PlayerType: an enum of [DEALER, PLAYER, SPECTATOR]; It is likely needed to get a working prototype for now
