@@ -4,15 +4,15 @@ package com.mycompany.app;
 //quick n dirty solution to cards. represents both hands and the shoebox
 public class CardBank{
 
-    public void fillDeck(int[] deck){
-        for(int i : deck){
-            deck[i] = no_of_decks;
+    public void fillDeck(){
+        for(int i : this.deck){
+            this.deck[i] = no_of_decks;
         }
     }
 
-    public void emptyDeck(int[] deck){
-        for(int i : deck){
-            deck[i] = 0;
+    public void emptyDeck(){
+        for(int i : this.deck){
+            this.deck[i] = 0;
         }
     }
 

@@ -112,7 +112,7 @@ public class App extends WebSocketServer {
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.YouAre = G.participants.get(1);       //the only player atm
+    E.playerID = G.participants.lastElement().playerID;  
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -151,9 +151,7 @@ public class App extends WebSocketServer {
 
     // Get our Game Object
     GameState G = conn.getAttachment();
-
-    //THE UPDATE FUNCTIONALITY IS NOT UNDERSTOOD IN THIS ARCHETECTURE. 
-    //G.Update(U);
+    G.Update(U);
 
     // send out the game state every time
     // to everyone

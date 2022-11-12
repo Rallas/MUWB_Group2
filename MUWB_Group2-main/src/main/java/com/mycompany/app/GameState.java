@@ -1,8 +1,10 @@
 package com.mycompany.app;
 
+import java.util.Vector;
+
 public class GameState {
-    //manages the game state.
-    Person participants[]; //a loopable array of all current players and dealer
+    //manages the game state. 
+    Vector <Person> participants = new Vector<Person>(); //a vector of all current players and dealer
     int GameId;//simple id that can be used to make each game unique
     //I am anticipating multi-connection online play, with host/client structure.
     //by storing the game state as a single class I can pass around a 'saved game'
@@ -12,18 +14,17 @@ public class GameState {
     public String[] Msg = new String [2];
     public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
 
-    GameState(){
-        participants = new Person[2];               
-        participants[0] = new Person(0);        //dealer
-        
-
+    GameState()
+    {                  
+        participants.add(new Person(0,0));//dealer
         Button = new PlayerType[5];
         for (int i = 0; i < Button.length; i++) {
             Button[i] = PlayerType.SPECTATOR;
         }
-        //Card CardBank = new CardBank();
+        CardBank shoeBox = new CardBank();
+        shoeBox.fillDeck();
         GameId = 1;
-        //CurrentTurn = participants[1].type;
+        
         Msg[0] = "You're the dealer. You should be a bot....Huh";
         Msg[1] = "Welcome. The game will begin shortly";
     }
@@ -42,7 +43,7 @@ public class GameState {
             deck_val = 1;           //need to figure out how to hashmap each card value word to its numerical val 
         }
         return 0;
-    }*/ //must refactor
+    }
 
     public static int packageAndPrint(Person participants[])
     {
@@ -55,24 +56,24 @@ public class GameState {
         System.out.println("Player: " + participants[1].getHand());
         
         return 0;
-    }
+    }*/ //must refactor
 
-    public void StartGame(Person participants[])
+    public void StartGame(Vector<Person> participants)
     {
         //starts the gameloop
-        Msg[0] = "StartGame: You are the dealer. Huh....";
-        Msg[1] = "StartGame: You are Player 1. Your turn";
-        CurrentTurn = 1;                
+        CurrentTurn = 0;        
+
     }
 
-    public static int Update(UserEvent U)
+    public int Update(UserEvent U)
     {
         System.out.println("The User Event is " + U.PlayerIdx + " " + U.Button);
 
-        /*if ((CurrentTurn == U.PlayerIdx) && (CurrentTurn == participants[0].type || CurrentTurn == participants[1].type)) {
+        if ((CurrentTurn == U.PlayerIdx)) 
+        {
             // Move is legitimate, lets do what was requested
 
-            // Is the button not taken by X or O?
+            /*// Is the button not taken by X or O?
             if (Button[U.Button] == PlayerType.NOPLAYER) {
                 System.out.println("the button was 0, setting it to" + U.PlayerIdx);
                 Button[U.Button] = U.PlayerIdx;
@@ -87,14 +88,16 @@ public class GameState {
                 }
             } else {
                 Msg[PlayerToIdx(U.PlayerIdx)] = "Not a legal move.";
-            }
+            }*/
 
             
-            // Check for winners, losers, and a draw
+            /*// Check for winners, losers, and a draw
             if (CheckBoard(PlayerType.XPLAYER)) {
                 Msg[0] = "You Win!";
                 Msg[1] = "You Lose!";
                 CurrentTurn = PlayerType.NOPLAYER;*/
+            return 0;
+        }
         return 0;
     }
 }
