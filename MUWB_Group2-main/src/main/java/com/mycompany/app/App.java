@@ -65,7 +65,8 @@ import com.google.gson.GsonBuilder;
 public class App extends WebSocketServer {
   // All games currently underway on this server are stored in the vector ActiveGames
   Vector <GameState> ActiveGames = new Vector<GameState>();
-
+  
+  int startWager = 500;
   int GameId = 1;
 
   public App(int port) {
@@ -87,7 +88,7 @@ public class App extends WebSocketServer {
     GameState G = null;
 
     for (GameState i : ActiveGames) {
-      if (i.participants.length > 1 && i.participants.length < 5) {
+      if (i.participants.size() > 1 && i.participants.size() < 5) {
         G = i;
         System.out.println("found a match");
       }
@@ -99,19 +100,19 @@ public class App extends WebSocketServer {
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants[0] = new Person(0);    
+      G.participants.add(new Person(1,startWager,G.participants.size()));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
     } else {
       // join an existing game
       System.out.println(" not a new game");
-      G.participants[1].type = PlayerType.PLAYER;
+      G.participants.add(new Person(1,startWager,G.participants.size()));
       G.StartGame(G.participants);
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.YouAre = G.participants[1];       //the only player atm
+    E.YouAre = G.participants.get(1);       //the only player atm
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
