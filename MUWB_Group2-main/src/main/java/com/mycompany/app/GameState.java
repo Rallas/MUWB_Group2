@@ -98,6 +98,6 @@ public class GameState {
                 CurrentTurn = PlayerType.NOPLAYER;*/
             return 0;
         }
-        return 0;
+        return -1; //it's not your turn 
     }
 }

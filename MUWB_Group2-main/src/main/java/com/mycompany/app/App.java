@@ -55,8 +55,8 @@ import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-//import java.util.Timer;
-//import java.util.TimerTask;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import com.google.gson.Gson;
@@ -79,6 +79,8 @@ public class App extends WebSocketServer {
     super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
   }
 
+  
+
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
 
@@ -87,15 +89,18 @@ public class App extends WebSocketServer {
     // search for a game needing a player
     GameState G = null;
 
-    for (GameState i : ActiveGames) {
-      if (i.participants.size() > 1 && i.participants.size() < 5) {
+    for (GameState i : ActiveGames) 
+    {
+      if (i.participants.size() > 1 && i.participants.size() < 5) 
+      {
         G = i;
         System.out.println("found a match");
       }
     }
 
     // No matches ? Create a new Game.
-    if (G == null) {
+    if (G == null) 
+    {
       G = new GameState();
       G.GameId = GameId;
       GameId++;
@@ -103,7 +108,9 @@ public class App extends WebSocketServer {
       G.participants.add(new Person(1,startWager,G.participants.size()));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
-    } else {
+    } 
+    else 
+    {
       // join an existing game
       System.out.println(" not a new game");
       G.participants.add(new Person(1,startWager,G.participants.size()));
@@ -128,8 +135,34 @@ public class App extends WebSocketServer {
 
     System.out.println(jsonString);
     broadcast(jsonString);
+
+  
   }
 
+  public void startTimers()
+  {
+    Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() 
+    {
+      @Override
+      public void run()
+      {
+        for(GameState G : ActiveGames)
+        {
+          for(Person P: G.participants)
+          {
+            if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+            {
+              P.TakeTurn();
+            }
+          }
+        }
+    
+      }
+    }
+    ,5*1000, 5*1000);
+  }
+    
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     System.out.println(conn + " has closed");
@@ -197,5 +230,17 @@ public class App extends WebSocketServer {
     A.start();
     System.out.println("websocket Server started on port: " + port);
 
+    
   }
+
+  /*public class upDateBots extends TimerTask
+  {
+    Timer timer = new Timer();
+    @Override
+    public void run()
+    {
+      
+
+    }
+  }*/
 }

@@ -69,6 +69,52 @@ public class Actions {
         return 0; 
     }
 
+    public int getCardVal(int index, int acesVal)
+    {
+        int val = 0;
+        if(index == 1)
+        {
+            if(acesVal == 1)
+            {
+                val = 11;
+            }
+            else
+            {
+                val = 1;
+            }
+        }
+        else
+        {
+            val = (index/4)+1;
+            if(val>10)
+            {
+                val = 10;
+            }
+        }
+        return val;
+    }
+
+    public int count(CardBank deck)
+    {
+        int[] stack = deck.deck;
+        int count=0;
+        int acesHigh = 1;
+        for(int i : stack)
+        {
+            count = count + getCardVal(i,acesHigh);
+        }
+        if(count > 21)
+        {
+            count = 0;
+            acesHigh = 0;
+            for(int i : stack)
+            {
+                count = count + getCardVal(i,acesHigh);
+            }
+        }
+        return count;
+
+    }
 
     
 }

@@ -6,6 +6,7 @@ public class Person extends Actions{
     CardBank hand = new CardBank(); //stores cards. array to facilitate looping. position indicates value.
     int wager = 0;
     int winnings = 0;
+    int agression; //used with bots to determine the sum they stop at
 
     Person(int ID){
         this.type = PlayerType.values()[1];
@@ -22,6 +23,13 @@ public class Person extends Actions{
         this.playerID = ID;
     }
 
+    Person(int cutoff, int type, int winnings, int ID){ //bot specific
+        this.type = PlayerType.values()[type];
+        this.winnings = winnings;
+        this.playerID = ID;
+        this.agression = cutoff;
+    }
+
     public int getWager() {
         return wager;
     }
@@ -34,4 +42,14 @@ public class Person extends Actions{
         return this.hand;
     }
 
+    public int TakeTurn() //for letting bots (and dealer) play
+    {
+        int myTurn = 0;
+        while(this.count(this.hand) < this.agression)
+        {
+            //prio goes dealer, cheater, high, mid, low
+            
+        }
+        return 0;
+    }
 }
