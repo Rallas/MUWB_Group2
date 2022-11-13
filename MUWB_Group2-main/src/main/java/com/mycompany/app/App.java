@@ -153,7 +153,7 @@ public class App extends WebSocketServer {
           {
             if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
             {
-              P.TakeTurn();
+              P.TakeTurn(G);
             }
           }
         }
