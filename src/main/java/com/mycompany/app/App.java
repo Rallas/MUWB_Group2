@@ -55,8 +55,8 @@ import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-//import java.util.Timer;
-//import java.util.TimerTask;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import com.google.gson.Gson;
@@ -65,7 +65,8 @@ import com.google.gson.GsonBuilder;
 public class App extends WebSocketServer {
   // All games currently underway on this server are stored in the vector ActiveGames
   Vector <GameState> ActiveGames = new Vector<GameState>();
-
+  
+  int startWager = 500;
   int GameId = 1;
 
   public App(int port) {
@@ -78,6 +79,8 @@ public class App extends WebSocketServer {
     super(new InetSocketAddress(port), Collections.<Draft>singletonList(draft));
   }
 
+  
+
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
 
@@ -86,35 +89,37 @@ public class App extends WebSocketServer {
     // search for a game needing a player
     GameState G = null;
 
-    //THE FUNCTIONALITY FOR THE GAME STATE CONNECTIVITY WILL NEED REFACTORING AND HAS BEEN TEMPORARILY DISABLED
-    //TO ENSURE MINIMUM WORKING STATE. WHEN PLAYER CONNECTIVITY IS MORE CLEARLY UNDERSTOOD THIS WILL BE REIMPLEMENTED
-
-    for (GameState i : ActiveGames) {
-      if (i.participants[0].type == PlayerType.DEALER) {
+    for (GameState i : ActiveGames) 
+    {
+      if (i.participants.size() > 1 && i.participants.size() < 5) 
+      {
         G = i;
         System.out.println("found a match");
       }
     }
 
     // No matches ? Create a new Game.
-    if (G == null) {
+    if (G == null) 
+    {
       G = new GameState();
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants[0] = new Person(0);    
+      G.participants.add(new Person(1,startWager,G.participants.size()));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
-    } else {
+    } 
+    else 
+    {
       // join an existing game
       System.out.println(" not a new game");
-      G.participants[1].type = PlayerType.PLAYER;
+      G.participants.add(new Person(1,startWager,G.participants.size()));
       G.StartGame(G.participants);
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.YouAre = G.participants[1];       //the only player atm
+    E.playerID = G.participants.lastElement().playerID;  
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -130,8 +135,34 @@ public class App extends WebSocketServer {
 
     System.out.println(jsonString);
     broadcast(jsonString);
+
+  
   }
 
+  public void startTimers()
+  {
+    Timer timer = new Timer();
+    timer.scheduleAtFixedRate(new TimerTask() 
+    {
+      @Override
+      public void run()
+      {
+        for(GameState G : ActiveGames)
+        {
+          for(Person P: G.participants)
+          {
+            if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+            {
+              P.TakeTurn(G);
+            }
+          }
+        }
+    
+      }
+    }
+    ,5*1000, 5*1000);
+  }
+    
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     System.out.println(conn + " has closed");
@@ -153,9 +184,7 @@ public class App extends WebSocketServer {
 
     // Get our Game Object
     GameState G = conn.getAttachment();
-
-    //THE UPDATE FUNCTIONALITY IS NOT UNDERSTOOD IN THIS ARCHETECTURE. 
-    //G.Update(U);
+    G.Update(U);
 
     // send out the game state every time
     // to everyone
@@ -201,5 +230,17 @@ public class App extends WebSocketServer {
     A.start();
     System.out.println("websocket Server started on port: " + port);
 
+    
   }
+
+  /*public class upDateBots extends TimerTask
+  {
+    Timer timer = new Timer();
+    @Override
+    public void run()
+    {
+      
+
+    }
+  }*/
 }

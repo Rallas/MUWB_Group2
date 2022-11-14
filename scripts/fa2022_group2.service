@@ -4,8 +4,8 @@ Description=webpoker
 [Service]
 Type=simple
 Restart=always
-RestartSec=10
-ExecStart=mvn exec:java -Dexec.mainClass=uta.cse3310.App
+RestartSec=1
+ExecStart=mvn exec:java -Dexec.mainClass=com.mycompany.app.App
 WorkingDirectory=/home/fa2022_group2
 
 [Install]

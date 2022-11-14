@@ -1,6 +1,6 @@
 package com.mycompany.app;
 
-public class Card {
+public class Card {         //THIS CLASS IS OBSOLETE AS IT"S BEEN REPLACED BY CARDBANK
 
     public enum Suite {
         HEARTS, CLUBS, DIAMONDS, SPADES

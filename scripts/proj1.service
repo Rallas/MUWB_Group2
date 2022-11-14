@@ -1,12 +1,12 @@
 [Unit]
-Description=webpoker
+Description=MUWB_Group2
 
 [Service]
 Type=simple
 Restart=always
-RestartSec=5
-ExecStart=mvn exec:java -Dexec.mainClass=uta.cse3310.WebPoker
-WorkingDirectory=/home/project1/WebPoker
+RestartSec=1
+ExecStart=mvn exec:java -Dexec.mainClass=com.mycompany.app.App
+WorkingDirectory=/home/fa2022_group2
 
 [Install]
 WantedBy=multi-user.target
