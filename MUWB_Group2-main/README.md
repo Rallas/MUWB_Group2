@@ -5,7 +5,7 @@ Compile Status: Compiles
                 mvn clean
                 mvn compile
                 mvn package
-                mvn exec:java -Dexec.mainClass=com.my.company.app.App        
+                mvn exec:java -Dexec.mainClass=com.mycompany.app.App        
 
 Class declarations:
     UserEvent:  int GameId;
