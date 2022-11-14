@@ -70,32 +70,8 @@ public class GameState {
     {
         System.out.println("The User Event is " + U.PlayerIdx + " " + U.Button);
 
-        /*if ((CurrentTurn == U.PlayerIdx) && (CurrentTurn == participants[0].type || CurrentTurn == participants[1].type)) {
-            // Move is legitimate, lets do what was requested
+        
 
-            // Is the button not taken by X or O?
-            if (Button[U.Button] == PlayerType.NOPLAYER) {
-                System.out.println("the button was 0, setting it to" + U.PlayerIdx);
-                Button[U.Button] = U.PlayerIdx;
-                if (U.PlayerIdx == PlayerType.OPLAYER) {
-                    CurrentTurn = PlayerType.XPLAYER;
-                    Msg[1] = "Other Players Move.";
-                    Msg[0] = "Your Move.";
-                } else {
-                    CurrentTurn = PlayerType.OPLAYER;
-                    Msg[0] = "Other Players Move.";
-                    Msg[1] = "Your Move.";
-                }
-            } else {
-                Msg[PlayerToIdx(U.PlayerIdx)] = "Not a legal move.";
-            }
-
-            
-            // Check for winners, losers, and a draw
-            if (CheckBoard(PlayerType.XPLAYER)) {
-                Msg[0] = "You Win!";
-                Msg[1] = "You Lose!";
-                CurrentTurn = PlayerType.NOPLAYER;*/
         return 0;
     }
 }
