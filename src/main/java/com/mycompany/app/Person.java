@@ -1,12 +1,13 @@
 package com.mycompany.app;
 
-import java.util.Random;
+import java.util.*;
+
 
 public class Person extends Actions{
     PlayerType type; //player (nonzero) or dealer (0). int to allow for possibility of multiple player types.
     int playerID;
     //CardBank hand = new CardBank(); //stores cards. array to facilitate looping. position indicates value.
-    Card hand = new Card[2];        //temporarily rigged for UI testing.
+    Vector <Card> hand = new Vector<Card>();        //temporarily rigged for UI testing. May need to move this direction as JS can't iterate through CardBank as it is
     int wager = 0;
     int winnings = 200;
     int agression; //used with bots to determine the sum they stop at
@@ -14,16 +15,22 @@ public class Person extends Actions{
     Person(int ID){
         this.type = PlayerType.values()[1];
         this.playerID = ID;
+        hand.add(new Card());                   //Added for Vector implementation. Remove if you can make CardBank directly iterable
+        hand.add(new Card());
     }
 
     Person(int type, int ID){
         this.type = PlayerType.values()[type];
         this.playerID = ID;
+        hand.add(new Card());
+        hand.add(new Card());
     }
     Person(int type, int winnings, int ID){
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
         this.playerID = ID;
+        hand.add(new Card());
+        hand.add(new Card());
     }
 
     Person(int cutoff, int type, int winnings, int ID){ //bot specific
@@ -31,6 +38,8 @@ public class Person extends Actions{
         this.winnings = winnings;
         this.playerID = ID;
         this.agression = cutoff;
+        hand.add(new Card());
+        hand.add(new Card());
     }
 
     public int getWager() {
@@ -40,7 +49,7 @@ public class Person extends Actions{
         this.wager = wager;
     }
 
-    public CardBank getHand()
+    public Vector <Card> getHand()
     {
         return this.hand;
     }

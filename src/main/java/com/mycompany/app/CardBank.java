@@ -2,7 +2,7 @@ package com.mycompany.app;
 
 
 //quick n dirty solution to cards. represents both hands and the shoebox
-public class CardBank{
+public class CardBank {
 
     public void fillDeck(){
         for(int i : this.deck){

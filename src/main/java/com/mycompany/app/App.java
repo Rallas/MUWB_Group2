@@ -66,7 +66,7 @@ public class App extends WebSocketServer {
   // All games currently underway on this server are stored in the vector ActiveGames
   Vector <GameState> ActiveGames = new Vector<GameState>();
   
-  int startWager = 500;
+  int startWager = 200;     //was originally 500 but believe it should be 200
   int GameId = 1;
 
   public App(int port) {
@@ -114,12 +114,14 @@ public class App extends WebSocketServer {
       // join an existing game
       System.out.println(" not a new game");
       G.participants.add(new Person(1,startWager,G.participants.size()));
+      //G.participants[1].type = PlayerType.PLAYER;
       G.StartGame(G.participants);
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.playerID = G.participants.lastElement().playerID;  
+    E.playerID = G.participants.lastElement().playerID;
+    //E.playerID = G.participants[1].playerID;  
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -135,11 +137,9 @@ public class App extends WebSocketServer {
 
     System.out.println(jsonString);
     broadcast(jsonString);
-
-  
   }
 
-  public void startTimers()
+   public void startTimers()
   {
     Timer timer = new Timer();
     timer.scheduleAtFixedRate(new TimerTask() 
