@@ -26,7 +26,7 @@ public class CardBank {
     }*/
     
     public void add(Card One) {
-        deck [One.value] = One.value;
+        deck [One.value] = deck[One.value] + 1;
         count++; 
     }
 
