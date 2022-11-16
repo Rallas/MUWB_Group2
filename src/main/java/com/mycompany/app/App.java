@@ -114,14 +114,12 @@ public class App extends WebSocketServer {
       // join an existing game
       System.out.println(" not a new game");
       G.participants.add(new Person(1,startWager,G.participants.size()));
-      //G.participants[1].type = PlayerType.PLAYER;
       G.StartGame(G.participants);
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.playerID = G.participants.lastElement().playerID;
-    //E.playerID = G.participants[1].playerID;  
+    E.PlayerId = G.participants.lastElement().PlayerId;
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -154,6 +152,7 @@ public class App extends WebSocketServer {
             if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
             {
               P.TakeTurn(G);
+              //System.out.println("TakeTurn needs to be performed");
             }
           }
         }

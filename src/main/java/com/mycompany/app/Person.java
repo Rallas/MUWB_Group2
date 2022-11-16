@@ -5,41 +5,33 @@ import java.util.*;
 
 public class Person extends Actions{
     PlayerType type; //player (nonzero) or dealer (0). int to allow for possibility of multiple player types.
-    int playerID;
-    //CardBank hand = new CardBank(); //stores cards. array to facilitate looping. position indicates value.
-    Vector <Card> hand = new Vector<Card>();        //temporarily rigged for UI testing. May need to move this direction as JS can't iterate through CardBank as it is
+    int PlayerId;
+    CardBank hand = new CardBank(); //stores cards. array to facilitate looping. position indicates value.
+    //Vector <Card> hand = new Vector<Card>();        //temporarily rigged for UI testing. May need to move this direction as JS can't iterate through CardBank as it is
     int wager = 0;
-    int winnings = 200;
+    int winnings;
     int agression; //used with bots to determine the sum they stop at
 
     Person(int ID){
         this.type = PlayerType.values()[1];
-        this.playerID = ID;
-        hand.add(new Card());                   //Added for Vector implementation. Remove if you can make CardBank directly iterable
-        hand.add(new Card());
+        this.PlayerId = ID;
     }
 
     Person(int type, int ID){
         this.type = PlayerType.values()[type];
-        this.playerID = ID;
-        hand.add(new Card());
-        hand.add(new Card());
+        this.PlayerId = ID;
     }
     Person(int type, int winnings, int ID){
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
-        this.playerID = ID;
-        hand.add(new Card());
-        hand.add(new Card());
+        this.PlayerId = ID;
     }
 
     Person(int cutoff, int type, int winnings, int ID){ //bot specific
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
-        this.playerID = ID;
+        this.PlayerId = ID;
         this.agression = cutoff;
-        hand.add(new Card());
-        hand.add(new Card());
     }
 
     public int getWager() {
@@ -49,9 +41,9 @@ public class Person extends Actions{
         this.wager = wager;
     }
 
-    public Vector <Card> getHand()
+    public CardBank getHand()
     {
-        return this.hand;
+        return hand;
     }
 
     public int TakeTurn(GameState G) //for letting bots (and dealer) play
@@ -60,7 +52,7 @@ public class Person extends Actions{
         UserEvent U = new UserEvent();
         Random rand = new Random();
         int splitsRemaining = 2; //we don't want bots infinitly splitting, as they are likely to destroy themselves doing so
-        U.PlayerIdx = this.playerID;
+        U.PlayerId = this.PlayerId;
         U.GameId = G.GameId;
         //prio goes dealer, cheater, high, mid, low
         if(this.type == PlayerType.DEALER)
@@ -75,7 +67,7 @@ public class Person extends Actions{
         }
         if(this.type == PlayerType.BOTCHEAT)
         {
-            U.PlayerIdx = this.playerID;
+            U.PlayerId = this.PlayerId;
             U.GameId = G.GameId;
             if(this.count(this.hand)>8 && this.count(this.hand)<12)
             {
@@ -107,7 +99,7 @@ public class Person extends Actions{
         }
         if(this.type == PlayerType.BOTHIGH)
         {
-            U.PlayerIdx = this.playerID;
+            U.PlayerId = this.PlayerId;
             U.GameId = G.GameId;
             if(this.count(this.hand)>8 && this.count(this.hand)<12)
             {
@@ -131,7 +123,7 @@ public class Person extends Actions{
         }
         if(this.type == PlayerType.BOTMID)
         {
-            U.PlayerIdx = this.playerID;
+            U.PlayerId = this.PlayerId;
             U.GameId = G.GameId;
             while(this.count(this.hand) < this.agression && myTurn == 1)
             {
@@ -150,7 +142,7 @@ public class Person extends Actions{
         }
         if(this.type == PlayerType.BOTLOW)
         {
-            U.PlayerIdx = this.playerID;
+            U.PlayerId = this.PlayerId;
             U.GameId = G.GameId;
             while(this.count(this.hand) < this.agression && myTurn == 1)
             {

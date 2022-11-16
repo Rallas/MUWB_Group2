@@ -13,28 +13,15 @@ public class GameState {
     //by storing the game state as a single class I can pass around a 'saved game'
     //in json format, with the host using the  ID to manage multiple games with multiple players
     //This means any given game can be represented by a json of this class
-    public int CurrentTurn;
+    public int CurrentTurn = 0;
     public PlayerType Turn_Cycle;
     public String[] Msg = new String [2];
-    public int[] Button;         //may be recycled to inform players about the current options for any given turn
+    public int[] Button = new int[5];         //may be recycled to inform players about the current options for any given turn
 
     GameState()
     {                  
         participants.add(new Person(0,0));  //dealer
 
-        /*participants = new Person[2];
-        participants[0] = new Person(0);
-        participants[1] = new Person(1);*/
-
-
-        Button = new int[5];
-        //for (int i = 0; i < Button.length; i++) {
-            Button[0] = 0;
-            Button[1] = 1;
-            Button[2] = 0;
-            Button[3] = 1;
-            Button[4] = 0;
-        //}
         CardBank shoeBox = new CardBank();
         shoeBox.fillDeck();
         GameId = 1;
@@ -46,20 +33,48 @@ public class GameState {
     }
 
     //Reads in the game state, calls players to play until they stand or bust. checks if the participant is a player, bot, or dealer before calling logic
-    /*public static int setHand()
+    public int setHand(UserEvent U)
     {
         //collects bets and deals
+        for (Person i: participants){
+            if (i.PlayerId == U.PlayerId){
+                i.winnings = i.winnings - U.Button;
+            }
+        }
+        
+        participants.elementAt(0).hand.add(new Card());
+        participants.elementAt(0).hand.add(new Card());
+        participants.elementAt(1).hand.add(new Card());
+        participants.elementAt(1).hand.add(new Card());
+
+        Button[0] = 1;
+        Button[1] = 1;
+      //  CheckForOptions();
+        CurrentTurn++;
+        Turn_Cycle = PlayerType.PLAYER;
         return 0;
     }
 
-    public static int count(int[] deck)
+   /*  public int CheckForOptions(){
+        int temp = -1; 
+
+        for (Person i: participants){           //Check for a split
+            for (Card j: i.getHand()){
+                for (int k: j){
+                    if (k == j.value){
+                        
+                    }
+        }
+    }*/
+
+    /*public static int count(int[] deck)
     {
     }
 
     public static int packageAndPrint(Person participants[])
     {
      
-    }*/ //must refactor
+    }*/
 
     public void StartGame(Vector <Person> participants)
     {
@@ -70,30 +85,59 @@ public class GameState {
 
     }
 
-    /*public void addPlayer(PlayerType p){  //These 2 were recycled from Poker sample code. Unknown if still needed 
+    public void addPlayer(PlayerType p){  //These 2 were recycled from Poker sample code. Unknown if still needed 
         participants.add(new Person(10, 15));
     }
 
-    public void removePlayer(int PlayerIdx){
-        participants.remove(PlayerIdx - 1);
-    }*/
+    public void removePlayer(int PlayerId){
+        participants.remove(PlayerId - 1);
+    }
 
 
     public int Update(UserEvent U) //May need to alter game state & check for a winner if it's not implemented elsewhere
     {
-        System.out.println("The User Event is " + U.PlayerIdx + " " + U.Button);
+       // int count = 0;
+        System.out.println("The User Event is: " + U.Event + " Player: " + U.PlayerId + " Sent Button: " + U.Button);
 
-        Msg[0] = "The User Event is " + U.PlayerIdx + " " + U.Button;
-        Msg[1] = "The User Event is " + U.PlayerIdx + " " + U.Button;
+        Msg[0] = "The User Event is " + U.PlayerId + " " + U.Button;
+        Msg[1] = "The User Event is " + U.PlayerId + " " + U.Button;
 
-        if (U.Event == UserEventType.BET){
-
-            Msg[0] = "A BET of " + U.Button + " was made by Player " + U.PlayerIdx;
-            Msg[1] = "The User Event is " + U.PlayerIdx + " " + U.Button;
-        
+        if (U.Event.equals(UserEventType.BET)){
+            
+            Msg[0] = "A BET of " + U.Button + " was made by Player " + U.PlayerId;
+            Msg[1] = "A BET of " + U.Button + " was made by Player " + U.PlayerId;
+            
+            setHand(U);
             return 0;
         }
-        
+        else if (U.Event.equals(UserEventType.STAND)){
+
+            Msg[0] = "A STAND was made by Player " + U.PlayerId;
+            Msg[1] = "A STAND was made by Player " + U.PlayerId;
+            
+            return 0;
+        }
+        else if (U.Event.equals(UserEventType.HIT)){
+
+            Msg[0] = "A HIT was done by Player " + U.PlayerId;
+            Msg[1] = "A HIT was done by Player " + U.PlayerId;
+            
+            return 0;
+        }
+        else if (U.Event.equals(UserEventType.SPLIT)){
+
+            Msg[0] = "A SPLIT was done by Player " + U.PlayerId;
+            Msg[1] = "A SPLIT was done by Player " + U.PlayerId;
+            
+            return 0;
+        }
+        else if (U.Event.equals(UserEventType.DOUBLE)){
+
+            Msg[0] = "A DOUBLE DOWN was made by Player " + U.PlayerId;
+            Msg[1] = "A DOUBLE DOWN was made by Player " + U.PlayerId;
+            
+            return 0;
+        }
         return -1; //it's not your turn 
     }
 }
