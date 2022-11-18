@@ -19,66 +19,10 @@ connection.onclose = function (evt) {
     console.log("close");
     document.getElementById("topMessage").innerHTML = "Server Offline"
 }
-<<<<<<< HEAD
 var i = 0;
 var j = 0;
-=======
-
-const cards = new Map();
-cards.set(0, "0");         //these are needed to generate cards
-cards.set(1, "1");
-cards.set(2, "2");
-cards.set(3, "3");
-cards.set(4, "4");
-cards.set(5, "5");
-cards.set(6, "6");
-cards.set(7, "7");
-cards.set(8, "8");
-cards.set(9, "9");
-cards.set(10, "10");
-cards.set(11, "11");
-cards.set(12, "12");
-cards.set(13, "13");
-cards.set(14, "14");
-cards.set(15, "15");
-cards.set(16, "16");
-cards.set(17, "17");
-cards.set(18, "18");
-cards.set(19, "19");
-cards.set(20, "20");
-cards.set(21, "21");
-cards.set(22, "22");
-cards.set(23, "23");
-cards.set(24, "24");
-cards.set(25, "25");
-cards.set(26, "26");
-cards.set(27, "27");
-cards.set(28, "28");
-cards.set(29, "29");
-cards.set(30, "30");
-cards.set(31, "31");
-cards.set(32, "32");
-cards.set(33, "33");
-cards.set(34, "34");
-cards.set(35, "35");
-cards.set(36, "36");
-cards.set(37, "37");
-cards.set(38, "38");
-cards.set(39, "39");
-cards.set(40, "40");
-cards.set(41, "41");
-cards.set(42, "42");
-cards.set(43, "43");
-cards.set(44, "44");
-cards.set(45, "45");
-cards.set(46, "46");
-cards.set(47, "47");
-cards.set(48, "48");
-cards.set(49, "49");
-cards.set(50, "50");
-cards.set(51, "51");
-
->>>>>>> parent of 66270ec (Got GUI working)
+var player_card_count = 0;
+var dealer_card_count = 0;
 const UserTypeEventMap = new Map();
 UserTypeEventMap.set(-1, "DEAL");
 UserTypeEventMap.set(0, "STAND");
@@ -93,22 +37,31 @@ const valid_choices = new Map();
 valid_choices.set(0, "Not Appropriate");
 valid_choices.set(1, "Valid Option");
 
+
+var TimeLeft = 60;
+//This is for the countdown which should probably be for the turns
+var Timer = setInterval(function(){
+ if (TimeLeft <= 0){
+     clearInterval(Timer);
+     //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+     //connection.close(); This is annoying to deal w/ after a while
+ }
+ else{
+     document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
+ }
+ TimeLeft = TimeLeft - 1;
+}, 1000);
+
 connection.onmessage = function (evt) {             //message reciever
     var msg;
     msg = evt.data;
-    
+    //active = false;
     console.log("Message received: " + msg);
     const obj = JSON.parse(msg);                //this makes obj the parsed json string object
 
-<<<<<<< HEAD
     if(!('Turn_Cycle' in obj)){                  //this means the obj was a ServerEvent 
         if (obj.PlayerId == "0") {
             PlayerId = 0;
-=======
-    if('YouAre' in obj) {                  //this means the obj was a ServerEvent 
-        if (obj.YouAre == "DEALER") {
-            idx = 0;
->>>>>>> parent of 66270ec (Got GUI working)
         }
         else {
             PlayerId = obj.PlayerId;
@@ -120,97 +73,143 @@ connection.onmessage = function (evt) {             //message reciever
     else if ('CurrentTurn' in obj) {                //this is for when the sent msg is a Game class object
         // only pay attention to this game
         if (gameid == obj.GameId) {
-
+            var k = 0;
+            TimeLeft = 60;  
             console.log("A GameState was recieved: " + obj + "\n")
 
             // button states can be lit up or shaded to display current player turn options
-            document.getElementById("STAND").value = valid_choices.get(obj.Button[0]);              //This needs to update the display accordingly
-            document.getElementById("HIT").value = valid_choices.get(obj.Button[1]);
-            document.getElementById("SPLITPAIRS").value = valid_choices.get(obj.Button[2]);
-            document.getElementById("DOUBLEDOWN").value = valid_choices.get(obj.Button[3]);
-            document.getElementById("SURRENDER").value = valid_choices.get(obj.Button[4]);
+            for (button of obj.Button){    
+                if (button == 1){
+                    var Button_ID = "BUTTON_" + k;
+                    var Btn = document.getElementById(Button_ID);
+                    Btn.style.backgroundColor = 'lightgreen';
+                    k++;
+                }
+                else{
+                    var Button_ID = "BUTTON_" + k;
+                    var Btn = document.getElementById(Button_ID);
+                    Btn.style.backgroundColor = "#841311" ;
+                    k++;
+                }
+            }
 
             // process the game state
             for (const player of obj.participants) {
                
-
                 // only show the cards for this player
-<<<<<<< HEAD
                 if (player.PlayerId != 0) { //was orig player.id
+
                     if (player.PlayerId == PlayerId){// To only show for this player. Needs work    
-=======
-                if (player.type != "DEALER") { //was orig player.id
-
-                    
-
-                    for(const card of player.hand) {
-                        //console.log("Card =" + card.suite + "  " + card.value);
-                        var filename = cards.get(card) + ".svg";
-                        var element = "card" + (i + 1);
-
-                        var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                        img.setAttribute("src", filename);
-                        img.setAttribute("class", card);
-                        const parent = document.getElementById("PlayersCards");
-
-                        parent.appendChild(img);
-                        i++;
-                    }  // each card
->>>>>>> parent of 66270ec (Got GUI working)
-                        
+                        i = 0;
                         for(const card of player.hand.deck) {
+                            if (card > 0 && player_card_count < 2){
+                                    //while(card > 0){
+                                    var filename = i + ".svg";
+                                    var element = "card" + (i + 1);
+                                    var PlayerMapId = "P" + PlayerId + "_Map"; 
 
-                            if (i < player.hand.count && card > -1){
-                                var filename = card + ".svg";
-                                var element = "card" + (i + 1);
+                                    var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                    img.setAttribute("src", filename);
+                                    img.setAttribute("class", "PlayersCards");
+                                    const MainParent = document.getElementById("PlayersCards_Generated_Here");
+                                    MainParent.appendChild(img);
 
-                                var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                                img.setAttribute("src", filename);
-                                img.setAttribute("class", card);
-                                const parent = document.getElementById("PlayersCards");
+                                    var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                    img_for_map.setAttribute("src", filename);
+                                    img_for_map.setAttribute("class", "Game_Play_Map_Cards");
 
-                                parent.appendChild(img);
-                                i++;
+                                    const MapParent = document.getElementById(PlayerMapId);
+                                    MapParent.appendChild(img_for_map);
+                                    i++;
+                                    player_card_count++;
+                                    //}
                             }
-                        }  // each card
-                            
+                            i++;
+              
+
+                        }  // each card         
+                        
+                        TimeLeft = 60;
+                        Timer = setInterval(function(){
+                            if (TimeLeft <= 0){
+                                clearInterval(Timer);
+                                //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+                                //connection.close(); This is annoying to deal w/ after a while
+                            }
+                            else{
+                                document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
+                            }
+                            TimeLeft = TimeLeft - 1;
+                           }, 1000);
+
                         document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId]; // the message line. This returns a message to the current player after the turn. Goes w/ GameID check
                         var winnings_info = document.querySelector("#winning");
                         winnings_info.innerHTML = player.winnings;
+
+                    }
+                    else if (player.PlayerId != PlayerId){
+                        i = 0;
+                        for(const card of player.hand.deck) {
+                            if (card > 0 && player_card_count < 2){
+                                //while(card > 0){
+                                    var filename = i + ".svg";
+                                    var element = "card" + (i + 1);
+                                    var PlayerMapId = "P" + PlayerId + "_Map"; 
+
+                                    var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                    img.setAttribute("src", filename);
+                                    img.setAttribute("class", "Game_Play_Map_Cards");
+
+                                    const MapParenti = document.getElementById(PlayerMapId);
+                                    MapParenti.appendChild(img);
+                                    i++;
+                                    player_card_count++;
+                                //}
+                            }
+                            i++;
+                        }
                     }
                 }       
                 else {
-<<<<<<< HEAD
+                    j = 0;
                     for(const card of player.hand.deck) {
-                        if (j < player.hand.count && card > -1){
-                            var filename = card + ".svg";
+                        if (card > 0 && dealer_card_count < 2){
+                           // while(card > 0){
+                            var filename = j + ".svg";
                             var element = "card" + (j + 1);
-=======
-                    for(const card of player.hand) {
-                        var filename = cards.get(card) + ".svg";
-                        var element = "card" + (i + 1);
->>>>>>> parent of 66270ec (Got GUI working)
 
                             var img = document.createElement("img");
                             img.setAttribute("src", filename);
-                            img.setAttribute("class", card);
-                            const parent = document.getElementById("DealersCards");
-
+                            img.setAttribute("class", "DealersCards");
+                            const parent = document.getElementById("DealersCards_Generated_Here");
                             parent.appendChild(img);
+            
+                            var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                            img_for_map.setAttribute("src", filename);
+                            img_for_map.setAttribute("class", "Game_Play_Map_Cards");
+
+                            const MapParent = document.getElementById("DealerMap");
+                            MapParent.appendChild(img_for_map);
                             j++;
+                            dealer_card_count++;
+                            //}
                         }
+                        j++;
                     }
-                        document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId];
-                        var winnings_info = document.querySelector("#winning");
-                        winnings_info.innerHTML = player.winnings;
-                    } 
+                    document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId];
+                    var winnings_info = document.querySelector("#winning");
+                    winnings_info.innerHTML = player.winnings;
+                } 
             } // each player
         } // this is game state
+        Timer_Stop(Timer);
     }
 }
 
 
 function buttonclick(i) {
+    Timer_Stop(Timer);
+    TimeLeft = 240;
     U = new UserEvent();            //makes an event to represent the input of a player action
     U.PlayerId = PlayerId;
     U.GameId = gameid;
@@ -253,4 +252,19 @@ function showBet(){
     var betIndicator = document.querySelector("#Bet");
     betIndicator.innerHTML = betInfo;
     buttonclick(betInfo);
+}
+function Timer_Fun(TimeLeft){
+    if (TimeLeft <= 0){
+        clearInterval(Timer);
+        //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+        //connection.close(); This is annoying to deal w/ after a while
+    }
+    else{
+        document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
+    }
+    TimeLeft = TimeLeft - 1;
+}
+
+function Timer_Stop(Timer){
+    clearInterval(Timer);
 }

@@ -66,7 +66,7 @@ public class App extends WebSocketServer {
   // All games currently underway on this server are stored in the vector ActiveGames
   Vector <GameState> ActiveGames = new Vector<GameState>();
   
-  int startWager = 200;     //was originally 500 but believe it should be 200
+  int startWager = 500; 
   int GameId = 1;
 
   public App(int port) {
@@ -152,7 +152,6 @@ public class App extends WebSocketServer {
             if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
             {
               P.TakeTurn(G);
-              //System.out.println("TakeTurn needs to be performed");
             }
           }
         }

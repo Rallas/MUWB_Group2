@@ -17,19 +17,12 @@ public class CardBank {
 
     int no_of_decks = 6;     //represents the total number of decks
     int count = 0;
-    int[] deck = new int[52]; 
-    
-    /*CardBank(){                   //If 0 is an ACE then why not use -1
-        for(int i : this.deck){
-            this.deck[i] = -1;
-        }
-    }*/
+    int[] deck = new int[52];           //Each index is a count for the number of cards of that type
     
     public void add(Card One) {
         deck [One.value] = deck[One.value] + 1;
         count++; 
     }
-
     /*
     Kind and Suite are represented by index.
 
