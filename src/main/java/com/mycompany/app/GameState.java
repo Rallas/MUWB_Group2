@@ -1,195 +1,192 @@
 package com.mycompany.app;
 
 import java.util.Vector;
+import java.util.Random;
 
 import com.mycompany.app.UserEvent.UserEventType;
 
 public class GameState {
     //manages the game state. 
-    Vector <Person> participants = new Vector<Person>(); // a vector of all current players and dealer
-    //Person participants[];
+    Vector <Person> participants = new Vector<Person>(); //a vector of all current players and dealer
     int GameId;//simple id that can be used to make each game unique
-    //I am anticipating multi-connection online play, with host/client structure.
-    //by storing the game state as a single class I can pass around a 'saved game'
-    //in json format, with the host using the  ID to manage multiple games with multiple players
-    //This means any given game can be represented by a json of this class
-    public int CurrentTurn = 0;
-    public PlayerType Turn_Cycle;
+    public int CurrentTurn;
     public String[] Msg = new String [2];
-    public int Button[] = new int [5];    //may be recycled to inform players about the current options for any given turn
+    public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
     CardBank shoeBox = new CardBank();
+    int piggybank=0;
+    Random rand = new Random();
 
     GameState()
     {                  
-        participants.add(new Person(0,0));  //dealer
+        participants.add(0,new Person(16,0,0,0));  //dealer
 
+        
         shoeBox.fillDeck();
         GameId = 1;
-        CurrentTurn = 0;
-        Turn_Cycle = PlayerType.PLAYER;                     //This needs to be set to Player so they can set their bet
-        for (int i: Button){
-           Button[i] = 0;
-        }
+        CurrentTurn = -1;
+        
         Msg[0] = "DEALER MSG";
         Msg[1] = "PLAYER 1 MSG";
     }
-
-    //Reads in the game state, calls players to play until they stand or bust. checks if the participant is a player, bot, or dealer before calling logic
-    public int setHand(UserEvent U)
-    {
-        //collects bets and deals
-        for (Person i: participants){
-            if (i.PlayerId == U.PlayerId){
-                i.winnings = i.winnings - U.Button;
-            }
-        }
-        
-        participants.elementAt(0).hand.addCard(20);
-        participants.elementAt(0).hand.addCard(2);
-        participants.elementAt(1).hand.addCard(3);
-        participants.elementAt(1).hand.addCard(3);
-
-        //Button[0] = 1;
-        //Button[1] = 1;
-      //  CheckForOptions();
-        CurrentTurn++;
-        Turn_Cycle = PlayerType.PLAYER;
-        return 0;
-    }
-
-   /*  public int CheckForOptions(){
-        int temp = -1; 
-
-        for (Person i: participants){           //Check for a split
-            for (Card j: i.getHand()){
-                for (int k: j){
-                    if (k == j.value){
-                        
-                    }
-        }
-    }*/
-
-    /*public static int count(int[] deck)
-    {
-    }
-
-    public static int packageAndPrint(Person participants[])
-    {
-     
-    }*/
 
     public void StartGame(Vector <Person> participants)
     {
         Msg[0] = "StartGame: Msg 0";
         Msg[1] = "StartGame: Msg 1";
         //starts the gameloop
+        //first, pads with bots
+        //next, deals the appropriate num cards to each player
+        //Then, allows the update function to take over running the game
+        //the update function checks for a flag on the dealer (the last player in the vector) and then either facilitates play or collection of wagers
+        //when the update function determines that all players have gone, it calls a clean-up function that doles winnings and 
+        //preps the gamestate for closing/cycling. 
+
+        if(this.participants.size() < 3)
+        {
+            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
+        }
+        for(Person P : participants)
+        {
+            if(P.type == PlayerType.SPECTATOR)
+            {
+                P.type = PlayerType.PLAYER;
+            }
+            if(P.type != PlayerType.DEALER)
+            {
+                P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
+            }
+            else
+            {
+                P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+            }
+        }
         CurrentTurn = 0;        
 
     }
 
-    public void addPlayer(PlayerType p){  //These 2 were recycled from Poker sample code. Unknown if still needed 
-        participants.add(new Person(10, 15));
-    }
-
-    public void removePlayer(int PlayerId){
-        participants.remove(PlayerId - 1);
-    }
-
-
-    public int Update(UserEvent U) //May need to alter game state & check for a winner if it's not implemented elsewhere
-    {
-       // int count = 0;
-        System.out.println("The User Event is: " + U.Event + " Player: " + U.PlayerId + " Sent Button: " + U.Button);
-
-        Msg[0] = "The User Event is " + U.PlayerId + " " + U.Button;
-        Msg[1] = "The User Event is " + U.PlayerId + " " + U.Button;
-
-        if (U.Event.equals(UserEventType.BET)){
-            
-            Msg[0] = "A BET of " + U.Button + " was made by Player " + U.PlayerId;
-            Msg[1] = "A BET of " + U.Button + " was made by Player " + U.PlayerId;
-            
-            setHand(U);
-            return 0;
-        }
-        else if (U.Event.equals(UserEventType.STAND)){
-
-            Msg[0] = "A STAND was made by Player " + U.PlayerId;
-            Msg[1] = "A STAND was made by Player " + U.PlayerId;
-            
-            return 0;
-        }
-        else if (U.Event.equals(UserEventType.HIT)){
-
-            Msg[0] = "A HIT was done by Player " + U.PlayerId;
-            Msg[1] = "A HIT was done by Player " + U.PlayerId;
-            
-            return 0;
-        }
-        else if (U.Event.equals(UserEventType.SPLIT)){
-
-            Msg[0] = "A SPLIT was done by Player " + U.PlayerId;
-            Msg[1] = "A SPLIT was done by Player " + U.PlayerId;
-            
-            return 0;
-        }
-        else if (U.Event.equals(UserEventType.DOUBLE)){
-
-            Msg[0] = "A DOUBLE DOWN was made by Player " + U.PlayerId;
-            Msg[1] = "A DOUBLE DOWN was made by Player " + U.PlayerId;
-            
-            return 0;
-        }
-        return -1; //it's not your turn 
-    }
-
-    /*public int Update(UserEvent U)
+    //Reads in the user event, updates accordingly
+    public int Update(UserEvent U)
     {
         System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
-        //find player object to manipulate
-        for(Person P : participants)
+        
+        
+        if(participants.lastElement().hasWagered == 0) //have bets been collected?
         {
-            if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId)) 
+            for(Person P : participants)
             {
-                // Move is legitimate, lets do what was requested
-                switch(U.Button)
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR)
                 {
-                    case 0: //stand case
-                    {
-                        if(P.currentDepth <= P.splitDepth)
-                        {
-                            P.currentDepth++;
-                        }
-                        else
-                        {
-                            this.CurrentTurn++;
-                        }
-                        break;
-                    }
-                    case 1: //hit
-                    {
-                        P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-                        break;
-                    }
-                    case 2: //split
-                    {
-                        int targetForSplit = P.Split(P.hand.get(P.currentDepth));
-                        P.addSplitdeck(targetForSplit);
-                        break;
-                    }
-                    case 3: //double
-                    {
-
-                    }
-                    case 99: //cheat hit
-                    {
-
-                    }
+                    //match wager to minimum wager depth, toggle flag, then increment turn counter.
                 }
-
-                return 0;
+            }
+            
+        }//yes, proceed with play
+        //reset turn counter now that all have bet
+        CurrentTurn = 0;
+        if(participants.lastElement().hasWagered == 1)
+        {
+            
+            //find player object to manipulate
+            for(Person P : participants)
+            {
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR) 
+                {
+                    if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
+                    U.Button = 0;
+                    // Move is legitimate, lets do what was requested
+                    switch(U.Button)
+                    {
+                        case 0: //stand case
+                        {
+                            if(P.currentDepth <= P.splitDepth)
+                            {
+                                P.currentDepth++;
+                            }
+                            else
+                            {
+                                P.hasGone = 1;
+                                this.CurrentTurn++;
+                            }
+                            break;
+                        }
+                        case 1: //hit
+                        {
+                            P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+                            break;
+                        }
+                        case 2: //split
+                        {
+                            int targetForSplit = P.Split(P.hand.get(P.currentDepth));
+                            if(targetForSplit != -2)
+                            {
+                                P.addSplitdeck(targetForSplit);
+                            }
+                            break;
+                        }
+                        case 3: //double
+                        {
+                            P.wagers.set(P.currentDepth,(P.wagers.get(P.currentDepth))*2);
+                            break;
+                        }
+                        case 99: //cheat hit
+                        {
+                            P.cheatHit(P.hand.get(P.currentDepth), this.shoeBox);
+                            break;
+                        }
+                    }
+                    P.timeOut = 0;
+                    return 0; //turn was taken
+                }
+                //check to make sure there are players waiting. if not, cleanup
+                if(participants.lastElement().hasGone == 1)
+                {
+                    this.Cleanup();
+                }
             }
         }
-        return -1; //it's not your turn /* */
-    //}
+        return -1; //it's not your turn, or cleanup has concluded and nothing will recieve this
+    }
+
+    public void Cleanup()
+    {
+        int totalHandVal = 0;
+        
+        for(Person P : participants)
+        {
+            //iterate through each player, totalling hands and dealing bets.
+            totalHandVal = 0;
+            for(int i = 0; i < P.hand.size() ; i++)
+            {
+                totalHandVal = P.count(P.hand.get(i));
+                if(totalHandVal < 22 && totalHandVal > participants.lastElement().count(participants.lastElement().hand.get(0)))
+                {
+                    P.winnings = P.winnings + (int)(P.wagers.get(i) * 1.5);
+                }
+                else
+                {
+                    this.piggybank = P.wagers.get(i);
+                    P.winnings = P.winnings - P.wagers.get(i);
+                }
+            }
+            //reset flags
+            P.hasGone = 0;
+            P.hasWagered = 0;
+            P.timeOut = 0;
+            P.currentDepth = 0;
+            P.splitDepth = 0;
+            //reset other fields (wagers+cards vectors)
+            P.hand.clear();
+            P.wagers.clear();
+            P.hand.add(new CardBank());
+            P.wagers.add(0);
+            //eject players with no money 
+            if(P.winnings < 1)
+            {
+                participants.remove(P);
+            }
+            
+        }
+        //reset turn counter
+        this.CurrentTurn = 0;
+    }
 }

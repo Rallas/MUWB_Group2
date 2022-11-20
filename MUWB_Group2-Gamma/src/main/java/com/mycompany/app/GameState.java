@@ -11,7 +11,6 @@ public class GameState {
     int GameId;//simple id that can be used to make each game unique
     public int CurrentTurn;
     public String[] Msg = new String [2];
-    public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
     CardBank shoeBox = new CardBank();
     int piggybank=0;
     Random rand = new Random();

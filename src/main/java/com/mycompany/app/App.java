@@ -91,7 +91,7 @@ public class App extends WebSocketServer {
 
     for (GameState i : ActiveGames) 
     {
-      if (i.participants.size() > 1 && i.participants.size() < 5) 
+      if (i.participants.size() >= 1 && i.participants.size() < 5) 
       {
         G = i;
         System.out.println("found a match");
@@ -105,21 +105,21 @@ public class App extends WebSocketServer {
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants.add(new Person(1,startWager,G.participants.size()));    
+      G.participants.add(0,new Person(6,startWager,G.participants.size()));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
+      G.StartGame(G.participants);
     } 
     else 
     {
       // join an existing game
       System.out.println(" not a new game");
-      G.participants.add(new Person(1,startWager,G.participants.size()));
-      G.StartGame(G.participants);
+      G.participants.add(0,new Person(6,startWager,G.participants.size()));
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.lastElement().PlayerId;
+    E.PlayerId = G.participants.firstElement().playerID;
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -137,9 +137,11 @@ public class App extends WebSocketServer {
     broadcast(jsonString);
   }
 
-   public void startTimers()
+  public void startTimers()
   {
     Timer timer = new Timer();
+    
+    
     timer.scheduleAtFixedRate(new TimerTask() 
     {
       @Override
@@ -151,15 +153,32 @@ public class App extends WebSocketServer {
           {
             if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
             {
-              //P.TakeTurn(G);
-              System.out.println("Take Turn was performed");
+              P.TakeTurn(G);
+              
+            }
+            if((G.CurrentTurn == P.playerID) && P.type == PlayerType.PLAYER)
+            {
+              P.timeOut++;
+            }
+            if(P.timeOut > 3)
+            {
+              P.type = PlayerType.BOTHIGH;
+              P.agression = 17;
             }
           }
+          String jsonString;
+          GsonBuilder builder = new GsonBuilder();
+          Gson gson = builder.create();
+          jsonString = gson.toJson(G);
+
+          System.out.println(jsonString);
+          broadcast(jsonString);
         }
-    
+        
       }
     }
     ,5*1000, 5*1000);
+    
   }
     
   @Override
@@ -229,17 +248,6 @@ public class App extends WebSocketServer {
     A.start();
     System.out.println("websocket Server started on port: " + port);
 
-    
+    A.startTimers();
   }
-
-  /*public class upDateBots extends TimerTask
-  {
-    Timer timer = new Timer();
-    @Override
-    public void run()
-    {
-      
-
-    }
-  }*/
 }

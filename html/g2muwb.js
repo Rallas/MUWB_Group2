@@ -43,7 +43,7 @@ var TimeLeft = 60;
 var Timer = setInterval(function(){
  if (TimeLeft <= 0){
      clearInterval(Timer);
-     //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+     //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
      //connection.close(); This is annoying to deal w/ after a while
  }
  else{
@@ -94,16 +94,17 @@ connection.onmessage = function (evt) {             //message reciever
                     k++;
                 }
             }
+        }
 
             // process the game state
             for (const player of obj.participants) {
                
                 if (player.PlayerId != 0) {                //shows the cards for all players
 
-                    if (player.PlayerId == PlayerId){               //shows cards for our Player            
+                    if (player.PlayerId == PlayerId){               //shows cards for our Players            
                         i = 0;
                         cards_generated = 0;
-                        //for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
+                        for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
                             for(const card of player.hand.deck) {       //cycles through the hand for our Player
                                 cardcount = card;
                                 
@@ -135,12 +136,12 @@ connection.onmessage = function (evt) {             //message reciever
                                 }
                                 i++;
                             }  // each card         
-                        // } NEEDED for vector hand implementation
+                        }
                             TimeLeft = 60;
                             Timer = setInterval(function(){
                                 if (TimeLeft <= 0){
                                     clearInterval(Timer);
-                                    //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+                                    //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
                                     //connection.close(); This is annoying to deal w/ after a while
                                 }
                                 else{
@@ -156,72 +157,72 @@ connection.onmessage = function (evt) {             //message reciever
                     else if (player.PlayerId != PlayerId){      
                         i = 0;
                         cards_generated = 0;
-                        //for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
-                        for(const card of player.hand.deck) {
-                            cardcount = card;
-                                
-                                    if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
-                                        while(cardcount > 0){
-                                            var filename = i + ".svg";
-                                            var element = "card" + (i + 1);
-                                            var PlayerMapId = "P" + PlayerId + "_Map"; 
+                        for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
+                            for(const card of player.hand.deck) {
+                                cardcount = card;
+                                    
+                                if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
+                                    while(cardcount > 0){
+                                        var filename = i + ".svg";
+                                        var element = "card" + (i + 1);
+                                        var PlayerMapId = "P" + PlayerId + "_Map"; 
 
-                                            var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                                            img.setAttribute("src", filename);
-                                            img.setAttribute("class", "Game_Play_Map_Cards");
+                                        var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                        img.setAttribute("src", filename);
+                                        img.setAttribute("class", "Game_Play_Map_Cards");
 
-                                            const MapParenti = document.getElementById(PlayerMapId);
-                                            MapParenti.appendChild(img);
+                                        const MapParenti = document.getElementById(PlayerMapId);
+                                        MapParenti.appendChild(img);
 
-                                            cardcount--;
-                                            cards_generated++;
-                                        }
-                                        i++;
+                                        cardcount--;
+                                        cards_generated++;
                                     }
-                                    i++;
+                                i++;
                                 }
-                        
+                            i++;
                             }
+                        }
                 }       
-                else {
+                else {                          //Dealer Card Generation
                     j = 0;
                     cards_generated = 0;
-                    //for (const hand of player.hand // NOTE: needed for vector hand implementation
-                    for(const card of player.hand.deck) {
-                        cardcount = card;
-                        if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
-                           while(cardcount > 0){
-                            var filename = j + ".svg";
-                            var element = "card" + (j + 1);
+                    for (const hand of player.hand){ 
+                        for(const card of player.hand.deck) {
+                            cardcount = card;
+                            if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
+                                while(cardcount > 0){
+                                    var filename = j + ".svg";
+                                    var element = "card" + (j + 1);
 
-                            var img = document.createElement("img");
-                            img.setAttribute("src", filename);
-                            img.setAttribute("class", "DealersCards");
-                            const parent = document.getElementById("DealersCards_Generated_Here");
-                            parent.appendChild(img);
-            
-                            var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                            img_for_map.setAttribute("src", filename);
-                            img_for_map.setAttribute("class", "Game_Play_Map_Cards");
+                                    var img = document.createElement("img");
+                                    img.setAttribute("src", filename);
+                                    img.setAttribute("class", "DealersCards");
+                                    const parent = document.getElementById("DealersCards_Generated_Here");
+                                    parent.appendChild(img);
+                    
+                                    var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                    img_for_map.setAttribute("src", filename);
+                                    img_for_map.setAttribute("class", "Game_Play_Map_Cards");
 
-                            const MapParent = document.getElementById("DealerMap");
-                            MapParent.appendChild(img_for_map);
-                            
-                            cardcount--;
-                            cards_generated++;
+                                    const MapParent = document.getElementById("DealerMap");
+                                    MapParent.appendChild(img_for_map);
+                                    
+                                    cardcount--;
+                                    cards_generated++;
+                                }
+                                j++;
                             }
-                            j++;
-                        }
                         j++;
-                    }
+                        }
                     document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId];
                     var winnings_info = document.querySelector("#winning");
                     winnings_info.innerHTML = player.winnings;
-                } 
-            } // each player
-        } // this is game state
-        Timer_Stop(Timer);
+                    } 
+                }
+            } 
+        } 
     }
+    Timer_Stop(Timer);
 }
 
 
@@ -274,7 +275,7 @@ function showBet(){
 function Timer_Fun(TimeLeft){
     if (TimeLeft <= 0){
         clearInterval(Timer);
-        //window.alert("AND your outta Time! Thanks for Playing & Buh Bye");
+        //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
         //connection.close(); This is annoying to deal w/ after a while
     }
     else{

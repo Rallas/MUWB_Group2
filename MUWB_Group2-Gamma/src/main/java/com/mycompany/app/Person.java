@@ -17,6 +17,7 @@ public class Person extends Actions{
     int timeOut = 0;
     int hasWagered = 0;
     int hasGone = 0; //starting to get ugly with flags- stinks
+    public Boolean[] Choices;         //may be recycled to inform players about the current options for any given turn
 
 
 
