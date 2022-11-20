@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>
+		G2s Current Game State
+	</title>
+	<link rel="stylesheet" href="styles.css">
+	<script type="text/javascript" src="g2muwb.js"></script>
+</head>
+
+<body>
+	<center>
+		<div id="MainBanner" class="top-container">
+			<h3>WebPoker.info:9082</h3>
+		</div>
+		<label id="topMessage"></label>
+	</center>
+
+	<div class="middle-container">
+		<div>
+			<div id="TurnInfo"><b>
+					<center>Turn</center>
+				</b>
+				<hr>
+				<div class="Game_Play_Map">
+					Player 1: <br>
+					15
+					<div class="Game_Play_Map_Cards" id="P1_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 2: <br>
+					<div class="Game_Play_Map_Cards" id="P2_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 3:
+					<div class="Game_Play_Map_Cards" id="P3_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 4:
+					<div class="Game_Play_Map_Cards" id="P4_Map"> </div>
+				</div>
+
+
+				<div class="Game_Play_Map">Dealer: <br> 20
+					<div class="Game_Play_Map_Cards" id="DealerMap"></div>
+				</div>
+			</div>
+
+
+			<!-- Try to add a timer here -->
+		</div>
+		<center>
+			<div id="DealersCards_Background">
+				The Dealers Current Hand <br>
+
+				<div id="DealersCards_Generated_Here" class="DealersCards">
+		</center>
+		<!--The Dealers Hand: requires card objects layed out below w/ 1 card being hidden-->
+	</div>
+	</div>
+
+
+	<div id="Actions">
+
+		<center><b>Action Panel</b></center>
+		<hr>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_0" class="buttons" value="STAND" onclick=buttonclick(0)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_1" class="buttons" value="HIT" onclick=buttonclick(1)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_2" class="buttons" value="SPLIT PAIRS" onclick=buttonclick(2)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_3" class="buttons" value="DOUBLE DOWN" onclick=buttonclick(3)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_4" class="buttons" value="SURRENDER" onclick=buttonclick(4)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<div id = "countdown"></div>
+		</div>
+
+
+	</div>
+
+	<div class="bottom-container">
+		<center>
+			<div id="PlayersCards_Background">
+				Your Player's Hand <br>
+
+				<div id="PlayersCards_Generated_Here" class="PlayersCards">
+		</center>
+	</div>
+	</div>
+
+
+	<div id="PlayersHash">
+		<b>Player's Current Hash</b>
+		<hr>
+		Current Hash Object<br />
+		<!--For the Players current "Hash"-->
+	</div>
+
+	<div id="CurrentBet">
+		<div id="makeBet">
+			<center>Player: How much would you like to bet? <input id="sendBet" type="text"> <input type="submit"
+					name="sendBet" value="Bet" onclick="showBet()">
+		</div>
+		<hr>
+		<div id="Bet">
+			Your Bet: $
+			<br />
+		</div>
+		</center>
+	</div>
+
+	<div id="winnings">
+		<b>Player's Total Holdings</b>
+		<hr>
+		<div>
+			<p id="winning"></p><br />
+		</div>
+	</div>
+	</div>
+
+</body>
+
+<footer>
+
+</footer>
