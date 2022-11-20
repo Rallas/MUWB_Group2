@@ -7,7 +7,7 @@ import com.mycompany.app.UserEvent.UserEventType;
 
 public class GameState {
     //manages the game state. 
-    Vector <Person> participants = new Vector<Person>(); //a vector of all current players and dealer
+    Vector <Person> participants = new Vector<Person>(0); //a vector of all current players and dealer
     int GameId;//simple id that can be used to make each game unique
     public int CurrentTurn;
     public String[] Msg = new String [2];
@@ -44,9 +44,11 @@ public class GameState {
         //when the update function determines that all players have gone, it calls a clean-up function that doles winnings and 
         //preps the gamestate for closing/cycling. 
 
+        int firstUnoccupied = findFirstUnoccupied(this);
+
         if(this.participants.size() < 3)
         {
-            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
+            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
         }
         for(Person P : participants)
         {
@@ -191,6 +193,28 @@ public class GameState {
         }
         //reset turn counter
         this.CurrentTurn = 0;
+    }
+
+    public int findFirstUnoccupied(GameState G)
+    {
+        int firstID = -1;
+        int[] isPresent = new int[5];
+        for(int i = 0; i < 5; i++)
+        {
+            isPresent[i] = 0;
+        }
+        for(Person P : G.participants)
+        {
+            isPresent[P.playerID] = 1;
+        }
+        for(int i : isPresent)
+        {
+            if(firstID == -1 && isPresent[i] == 0)
+            {
+            firstID = i;
+            }
+        }
+        return firstID;
     }
 }
 

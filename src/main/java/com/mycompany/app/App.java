@@ -105,16 +105,19 @@ public class App extends WebSocketServer {
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants.add(0,new Person(6,startWager,G.participants.size()));    
+      G.participants.add(0,new Person(6,startWager,1));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
       G.StartGame(G.participants);
     } 
     else 
     {
+      //find first unoccupied ID
+      int firstID = G.findFirstUnoccupied(G);
+      
       // join an existing game
       System.out.println(" not a new game");
-      G.participants.add(0,new Person(6,startWager,G.participants.size()));
+      G.participants.add(0,new Person(6,startWager,firstID));
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
