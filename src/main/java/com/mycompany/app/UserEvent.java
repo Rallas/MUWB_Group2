@@ -7,7 +7,7 @@ public class UserEvent {
     };
 
     int GameId; // the game ID on the server
-    int PlayerIdx; // the ID of the player
+    int PlayerId; // the ID of the player
     int Button; // button number from 0 to 4. May be greater to represent a BET;
     UserEventType Event; 
 }
