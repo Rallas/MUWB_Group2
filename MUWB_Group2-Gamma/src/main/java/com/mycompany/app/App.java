@@ -119,7 +119,7 @@ public class App extends WebSocketServer {
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.firstElement().playerID;
+    E.PlayerId = G.participants.firstElement().PlayerId;
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -156,7 +156,7 @@ public class App extends WebSocketServer {
               P.TakeTurn(G);
               
             }
-            if((G.CurrentTurn == P.playerID) && P.type == PlayerType.PLAYER)
+            if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
             {
               P.timeOut++;
             }

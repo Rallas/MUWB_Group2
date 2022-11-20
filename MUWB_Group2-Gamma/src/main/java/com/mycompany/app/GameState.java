@@ -76,7 +76,7 @@ public class GameState {
         {
             for(Person P : participants)
             {
-                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR)
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
                 {
                     //match wager to minimum wager depth, toggle flag, then increment turn counter.
                 }
@@ -91,7 +91,7 @@ public class GameState {
             //find player object to manipulate
             for(Person P : participants)
             {
-                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR) 
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
                 {
                     if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
                     U.Button = 0;
