@@ -16,12 +16,12 @@ public class CardBank {
     }
 
     int no_of_decks = 6;     //represents the total number of decks
-    int num_of_cards = 0;
+    int count = 0;
     int[] deck = new int[52];           //Each index is a count for the number of cards of that type
     
-    public void addCard(int a) {
-        deck [a] = deck[a] + 1;
-        num_of_cards++;
+    public void add(Card One) {
+        deck [One.value] = deck[One.value] + 1;
+        count++; 
     }
     /*
     Kind and Suite are represented by index.

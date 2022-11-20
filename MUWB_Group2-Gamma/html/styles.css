@@ -79,7 +79,7 @@ table{
 
 #PlayersHash{
     background-color: #aaa;
-    height: 94px;
+    height: auto;
     width: 20%;
     float: left;
 }
@@ -92,7 +92,7 @@ table{
 }
 
 #makeBet{
-    height: 94px;
+    empty-cells: hide;
 }
 
 #Bet{
@@ -101,7 +101,7 @@ table{
 
 #winnings{
     background-color: #aaa;
-    height: 94px;
+    height: auto;
     width: 20%;
     float: right;
 }

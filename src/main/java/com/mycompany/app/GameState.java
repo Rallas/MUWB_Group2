@@ -16,18 +16,20 @@ public class GameState {
     public int CurrentTurn = 0;
     public PlayerType Turn_Cycle;
     public String[] Msg = new String [2];
-    public int[] Button = new int[5];         //may be recycled to inform players about the current options for any given turn
+    public int Button[] = new int [5];    //may be recycled to inform players about the current options for any given turn
+    CardBank shoeBox = new CardBank();
 
     GameState()
     {                  
         participants.add(new Person(0,0));  //dealer
 
-        CardBank shoeBox = new CardBank();
         shoeBox.fillDeck();
         GameId = 1;
         CurrentTurn = 0;
         Turn_Cycle = PlayerType.PLAYER;                     //This needs to be set to Player so they can set their bet
-        
+        for (int i: Button){
+           Button[i] = 0;
+        }
         Msg[0] = "DEALER MSG";
         Msg[1] = "PLAYER 1 MSG";
     }
@@ -42,13 +44,13 @@ public class GameState {
             }
         }
         
-        participants.elementAt(0).hand.add(new Card());
-        participants.elementAt(0).hand.add(new Card());
-        participants.elementAt(1).hand.add(new Card());
-        participants.elementAt(1).hand.add(new Card());
+        participants.elementAt(0).hand.addCard(20);
+        participants.elementAt(0).hand.addCard(2);
+        participants.elementAt(1).hand.addCard(3);
+        participants.elementAt(1).hand.addCard(3);
 
-        Button[0] = 1;
-        Button[1] = 1;
+        //Button[0] = 1;
+        //Button[1] = 1;
       //  CheckForOptions();
         CurrentTurn++;
         Turn_Cycle = PlayerType.PLAYER;
@@ -140,4 +142,54 @@ public class GameState {
         }
         return -1; //it's not your turn 
     }
+
+    /*public int Update(UserEvent U)
+    {
+        System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
+        //find player object to manipulate
+        for(Person P : participants)
+        {
+            if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId)) 
+            {
+                // Move is legitimate, lets do what was requested
+                switch(U.Button)
+                {
+                    case 0: //stand case
+                    {
+                        if(P.currentDepth <= P.splitDepth)
+                        {
+                            P.currentDepth++;
+                        }
+                        else
+                        {
+                            this.CurrentTurn++;
+                        }
+                        break;
+                    }
+                    case 1: //hit
+                    {
+                        P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+                        break;
+                    }
+                    case 2: //split
+                    {
+                        int targetForSplit = P.Split(P.hand.get(P.currentDepth));
+                        P.addSplitdeck(targetForSplit);
+                        break;
+                    }
+                    case 3: //double
+                    {
+
+                    }
+                    case 99: //cheat hit
+                    {
+
+                    }
+                }
+
+                return 0;
+            }
+        }
+        return -1; //it's not your turn /* */
+    //}
 }

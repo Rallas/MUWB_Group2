@@ -3,7 +3,7 @@ package com.mycompany.app;
 import java.util.Random;
 
 public class Actions {
-    //contains all logical functionality that can be taken by players
+    //contains most card-bound logical functionality that can be taken by players
     //factory method abandoned. was a solution looking for a problem and unnecessary 
 
     public int findCard(CardBank stack)
@@ -37,7 +37,7 @@ public class Actions {
         int target = findCard(bank);
         bank.deck[target]--;
         deck.deck[target]++;
-
+        
     }
 
     public int Split(CardBank deck)
@@ -48,19 +48,16 @@ public class Actions {
         // -2 = NO CARD FOUND
         // 0-51 = DUPLICATE CARD FOUND AT INDEX RETURNED
 
-        return 0;
-    }
+        int targetCard = -2;
+        for(int i = 0; i<52;i++)
+        {
+            if(targetCard == -2 && deck.deck[i]>1)
+            {
+                targetCard = i;
+            }
+        }
 
-    public int Stand()
-    {
-        //signals the gamestate that the player is done with their turn
-        return 0;
-    }
-
-    public int Double()
-    {
-        //used when the first to cards sum between 9 and 11 to double the wager
-        return 0;
+        return targetCard;
     }
 
     public int Bet(int wager)
@@ -117,5 +114,21 @@ public class Actions {
 
     }
 
+    public void cheatHit(CardBank deck, CardBank bank)
+    {
+        int targetCard = 0;
+        int targetSum = 0;
+        targetSum = 21 - count(deck);
+        for(int i = 0; i < 52; i++)
+        {
+            if(getCardVal(bank.deck[i],0) <= targetSum && bank.deck[i] > 0)
+            {
+                targetCard = i;
+            }
+        }
+        deck.deck[targetCard]++;
+        bank.deck[targetCard]--;
+    }
 
+    
 }
