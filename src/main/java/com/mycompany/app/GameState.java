@@ -10,7 +10,7 @@ public class GameState {
     Vector <Person> participants = new Vector<Person>(0); //a vector of all current players and dealer
     int GameId;//simple id that can be used to make each game unique
     public int CurrentTurn;
-    public String[] Msg = new String [2];
+    public String[] Msg = new String [5];
     public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
     CardBank shoeBox = new CardBank();
     int piggybank=0;
@@ -26,7 +26,11 @@ public class GameState {
         CurrentTurn = -1;
         
         Msg[0] = "DEALER MSG";
-        Msg[1] = "PLAYER 1 MSG";
+        Msg[1] = "STANDBY";
+        Msg[2] = "STANDBY";
+        Msg[3] = "STANDBY";
+        Msg[4] = "STANDBY";
+
     }
 
     
@@ -34,8 +38,12 @@ public class GameState {
 
     public void StartGame(Vector <Person> participants)
     {
-        Msg[0] = "StartGame: Msg 0";
-        Msg[1] = "StartGame: Msg 1";
+        Msg[0] = "StartGame: Await turn plr. 0";
+        Msg[1] = "StartGame: Await turn plr. 1";
+        Msg[2] = "StartGame: Await turn plr. 2";
+        Msg[3] = "StartGame: Await turn plr. 3";
+        Msg[4] = "StartGame: Await turn plr. 4";
+
         //starts the gameloop
         //first, pads with bots
         //next, deals the appropriate num cards to each player
