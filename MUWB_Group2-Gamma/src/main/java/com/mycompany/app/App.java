@@ -105,7 +105,7 @@ public class App extends WebSocketServer {
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants.add(new Person(1,startWager,G.participants.size()));    
+      G.participants.add(0,new Person(6,startWager,G.participants.size()));    
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
     } 
@@ -113,8 +113,7 @@ public class App extends WebSocketServer {
     {
       // join an existing game
       System.out.println(" not a new game");
-      G.participants.add(new Person(1,startWager,G.participants.size()));
-      G.StartGame(G.participants);
+      G.participants.add(0,new Person(6,startWager,G.participants.size()));
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player

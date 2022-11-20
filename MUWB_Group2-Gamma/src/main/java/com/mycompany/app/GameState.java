@@ -8,23 +8,20 @@ public class GameState {
     //manages the game state. 
     Vector <Person> participants = new Vector<Person>(); //a vector of all current players and dealer
     int GameId;//simple id that can be used to make each game unique
-    //I am anticipating multi-connection online play, with host/client structure.
-    //by storing the game state as a single class I can pass around a 'saved game'
-    //in json format, with the host using the  ID to manage multiple games with multiple players
-    //This means any given game can be represented by a json of this class
     public int CurrentTurn;
     public String[] Msg = new String [2];
     public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
     CardBank shoeBox = new CardBank();
+    int piggybank=0;
 
     GameState()
     {                  
-        participants.add(new Person(0,0));  //dealer
+        participants.add(0,new Person(16,0,0,0));  //dealer
 
         
         shoeBox.fillDeck();
         GameId = 1;
-        CurrentTurn = 0;
+        CurrentTurn = -1;
         
         Msg[0] = "DEALER MSG";
         Msg[1] = "PLAYER 1 MSG";
@@ -46,6 +43,10 @@ public class GameState {
 
         for(Person P : participants)
         {
+            if(P.type == PlayerType.SPECTATOR)
+            {
+                P.type = PlayerType.PLAYER;
+            }
             if(P.type != PlayerType.DEALER)
             {
                 P.Deal(P.hand.get(P.currentDepth), this.shoeBox);

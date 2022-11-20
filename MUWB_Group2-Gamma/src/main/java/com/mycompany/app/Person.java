@@ -69,6 +69,8 @@ public class Person extends Actions{
         //prio goes dealer, cheater, high, mid, low
         if(this.type == PlayerType.DEALER)
         {
+            U.Button = 1;
+            G.Update(U); //messy. Allows hit, but attempts to force it. Technically logically sound but don like it one bit
             while(this.count(this.hand.get(currentDepth)) < 16 && myTurn == 1)
             {
                 U.Button = 1;

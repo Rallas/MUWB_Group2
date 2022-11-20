@@ -3,7 +3,7 @@ package com.mycompany.app;
 import java.util.Random;
 
 public class Actions {
-    //contains all logical functionality that can be taken by players
+    //contains most card-bound logical functionality that can be taken by players
     //factory method abandoned. was a solution looking for a problem and unnecessary 
 
     public int findCard(CardBank stack)
