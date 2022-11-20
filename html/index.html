@@ -3,10 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content = "width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>
 		G2s Current Game State
 	</title>
@@ -14,113 +11,122 @@
 	<script type="text/javascript" src="g2muwb.js"></script>
 </head>
 
-
 <body>
-<center>
-<div class = "container">
-<button type ="button" class = "btn btn-info" data-toggle="collapse" data-target="#content"> Server Deployment Help Notes </button>
-	<div id="content" class = "collapse" style="float:left; width: 100%;">
-			<h2>If you're having issues deploying to your link do/check these:</h2>
-			<h3> - Update the HTML page w/ the port listed for your group on the MUWB doc (this page needs the Websocket
-				Port)</h3>
-			<h3> - Update the App class (the Websocket port should match the HTML doc & the HTTP port also needs to be
-				corrected) </h3>
-			<h3> - The script for your group & proj1.service need to be updated to reflect your main App class</h3>
-
-			<h4>Doing this & running to the given bash script as given in the module should let you deploy your game to
-				the server and map it to your group's hyperlink <br>
-				Note that you will need to type your group number @ the end of the bash script terminal command (i.e.
-				bash scripts/deploy.bash group#) <br>
-				See also: deployment information and MUWB.docx Canvas modules</h4>
-			<hr>
-	</div>
-</div>
-
-	<div id="mainbanner" class="top-container" style="float:left; width: 100%;">
-		<h3>WebPoker.info:9082</h3></center></div>
-	</div>
-	
-	<center><label id="topMessage"></label></center>
-
-
+	<center>
+		<div id="MainBanner" class="top-container">
+			<h3>WebPoker.info:9082</h3>
+		</div>
+		<label id="topMessage"></label>
+	</center>
 
 	<div class="middle-container">
-
-		<div style="background-color:rgb(199, 200, 103); height:330px; width: 20%; float:left;">
+		<div>
 			<div id="TurnInfo"><b>
 					<center>Turn</center>
-				</b></div>
-			<hr>
-			Player 1: P1 card count object<br />									<!--Other player & Dealer Counts and Card info for the current round-->
-			Player 2: P2 card count object<br />
-			Player 3: P3 card count object<br />
-			Player 4: P4 card count object<br />
-			Dealer: Dealer card count object
+				</b>
+				<hr>
+				<div class="Game_Play_Map">
+					Player 1: <br>
+					15
+					<div class="Game_Play_Map_Cards" id="P1_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 2: <br>
+					<div class="Game_Play_Map_Cards" id="P2_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 3:
+					<div class="Game_Play_Map_Cards" id="P3_Map"> </div>
+				</div>
+
+				<div class="Game_Play_Map"> Player 4:
+					<div class="Game_Play_Map_Cards" id="P4_Map"> </div>
+				</div>
+
+
+				<div class="Game_Play_Map">Dealer: <br> 20
+					<div class="Game_Play_Map_Cards" id="DealerMap"></div>
+				</div>
+			</div>
+
+
+			<!-- Try to add a timer here -->
 		</div>
 		<center>
-			<div id="DealersCards" style="background-color:#c57373; height:330px; width:60%; float:left;">
+			<div id="DealersCards_Background">
 				The Dealers Current Hand <br>
-				<!--The Dealers Hand: requires card objects layed out below w/ 1 card being hidden-->
 
-				<!--<img id = "card 1" src = "4.svg" width="100px"> -->
-
-			</div>
+				<div id="DealersCards_Generated_Here" class="DealersCards">
 		</center>
+		<!--The Dealers Hand: requires card objects layed out below w/ 1 card being hidden-->
+	</div>
+	</div>
 
-		<div id="Actions" style="background-color:rgb(129, 68, 156); height:330px; width:20%; float:right;">
-			<span><table>
-			<center><b>Action Panel</b></center></span>
-			<span><tr>
-				<td><input type="button" class = "buttons" value="STAND"  onclick=buttonclick(0)></input></td> <td><input type="text" class = "options" value="Not Appropriate" id="STAND"></input> </td><br />
-			</tr>
-			<tr>
-				<td><input type="button" class = "buttons" value= "HIT" onclick=buttonclick(1)></input></td><td><input type="text" class = "options" value="Not Appropriate" id="HIT"></td><br />
-			</tr>
-			<tr>
-				<td><input type="button" class = "buttons" value= "SPLIT PAIRS"  onclick=buttonclick(2)></td><td></input><input type="text" class = "options" value="Not Appropriate" id="SPLITPAIRS"></td><br />
-			</tr>
-			<tr>
-				<td><input type="button" class = "buttons" value="DOUBLE DOWN" onclick=buttonclick(3)></input></td><td><input type="text" class = "options" value="Not Appropriate" id="DOUBLEDOWN"></td><br />
-			</tr>
-			<tr>
-				<td><input type="button" class = "buttons" value="SURRENDER" onclick=buttonclick(4)></input></td><td><input type="text" class = "options" value="Not Appropriate" id="SURRENDER"><br /></td>
-			</tr></span>
-			</table>
+
+	<div id="Actions">
+
+		<center><b>Action Panel</b></center>
+		<hr>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_0" class="buttons" value="STAND" onclick=buttonclick(0)></input>
 		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_1" class="buttons" value="HIT" onclick=buttonclick(1)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_2" class="buttons" value="SPLIT PAIRS" onclick=buttonclick(2)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_3" class="buttons" value="DOUBLE DOWN" onclick=buttonclick(3)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<input type="button" id = "BUTTON_4" class="buttons" value="SURRENDER" onclick=buttonclick(4)></input>
+		</div>
+		<div class=Action_Panel_Map>
+			<div id = "countdown"></div>
+		</div>
+
+
 	</div>
 
 	<div class="bottom-container">
 		<center>
-			<div id="PlayersCards" style="background-color:#b3d0dc; height: 200px; clear:both">				
+			<div id="PlayersCards_Background">
 				Your Player's Hand <br>
-			</div>
+
+				<div id="PlayersCards_Generated_Here" class="PlayersCards">
 		</center>
+	</div>
+	</div>
 
-		<div id="PlayersHash" style="background-color:#aaa; height:auto; width: 20%; float:left;">
-			<div><b>Player's Current Hash</b></div>
-			<hr>
-			Current Hash Object<br />
-			<!--For the Players current "Hash"-->
-		</div>
 
-		<div id="CurrentBet" style="background-color:#eee; height:auto; width:60%; float:left;">
-			<div id ="makeBet">
-				<center>Player: How much would you like to bet? <input id = "sendBet" type = "text"> <input type = "submit" name = "sendBet" value = "Bet" onclick="showBet()">
-			</div>
-				<hr>
-				<div id = "Bet">
-					Your Bet: $
-				<br />
-			</div>
-			</center>
-		</div>
-
-		<div style="background-color:#aaa; height:auto; width:20%; float:right;">
-			<b>Player's Total Holdings</b>
+	<div id="PlayersHash">
+		<b>Player's Current Hash</b>
 		<hr>
-			<div>
-			<p id = "winning"></p><br/>
-		</div> </div>
+		Current Hash Object<br />
+		<!--For the Players current "Hash"-->
+	</div>
+
+	<div id="CurrentBet">
+		<div id="makeBet">
+			<center>Player: How much would you like to bet? <input id="sendBet" type="text"> <input type="submit"
+					name="sendBet" value="Bet" onclick="showBet()">
+		</div>
+		<hr>
+		<div id="Bet">
+			Your Bet: $
+			<br />
+		</div>
+		</center>
+	</div>
+
+	<div id="winnings">
+		<b>Player's Total Holdings</b>
+		<hr>
+		<div>
+			<p id="winning"></p><br />
+		</div>
+	</div>
 	</div>
 
 </body>

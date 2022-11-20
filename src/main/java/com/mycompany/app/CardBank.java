@@ -1,6 +1,5 @@
 package com.mycompany.app;
 
-
 //quick n dirty solution to cards. represents both hands and the shoebox
 public class CardBank {
 
@@ -17,8 +16,13 @@ public class CardBank {
     }
 
     int no_of_decks = 6;     //represents the total number of decks
-
-    int[] deck = new int[51]; 
+    int count = 0;
+    int[] deck = new int[52];           //Each index is a count for the number of cards of that type
+    
+    public void add(Card One) {
+        deck [One.value] = deck[One.value] + 1;
+        count++; 
+    }
     /*
     Kind and Suite are represented by index.
 
