@@ -12,8 +12,12 @@ public class Person extends Actions{
     int agression; //used with bots to determine the sum they stop at
     int splitDepth=0; //exists to track the total depth of hands thathave been split to.
     int currentDepth=0; //exists to track the current hand being played with.
-    Vector <CardBank> hand = new Vector<CardBank>(); // represents both the initial hand and all splits
-    Vector <Integer> wagers = new Vector<Integer>(); //represents wagers for a given deck.
+    Vector <CardBank> hand = new Vector<CardBank>(0); // represents both the initial hand and all splits
+    Vector <Integer> wagers = new Vector<Integer>(0); //represents wagers for a given deck.
+    int timeOut = 0;
+    int hasWagered = 0;
+    int hasGone = 0; //starting to get ugly with flags- stinks
+
 
 
     /*Person(){ //empty constructor for creating  scanners
@@ -28,11 +32,15 @@ public class Person extends Actions{
     Person(int type, int ID){
         this.type = PlayerType.values()[type];
         this.playerID = ID;
+        this.hand.add(new CardBank());
+        this.wagers.add(0);
     }
     Person(int type, int winnings, int ID){
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
         this.playerID = ID;
+        this.hand.add(new CardBank());
+        this.wagers.add(0);
     }
 
     Person(int cutoff, int type, int winnings, int ID){ //bot specific
@@ -40,6 +48,8 @@ public class Person extends Actions{
         this.winnings = winnings;
         this.playerID = ID;
         this.agression = cutoff;
+        this.hand.add(new CardBank());
+        this.wagers.add(0);
     }
 
     public CardBank getHand(int depth)
@@ -55,6 +65,7 @@ public class Person extends Actions{
         newHand.deck[cardToSeed]++;
         this.splitDepth++;
         this.hand.add(newHand);
+        this.wagers.add(this.wagers.get(currentDepth));
     }
 
     public int TakeTurn(GameState G) //for letting bots (and dealer) play
