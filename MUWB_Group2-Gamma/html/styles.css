@@ -1,0 +1,141 @@
+
+#MainBanner{
+    float: center; 
+    width: 100%;
+}
+
+hr{
+    margin-bottom: 0;
+    border-width: 0;
+    background-color: #841311;
+}
+
+.Game_Play_Map{
+    display: flex;
+    height: 80px;
+    width: 100%;
+    border: solid;
+    border-color: black;
+    border-width: 0.5px;  
+}
+
+.Game_Play_Map_Cards{
+    width: 50px;
+    height: 80px;
+    border-radius: 5px;
+    display: inline;
+    display: flex;
+    padding: 0px 2px 0px 2px;
+}
+
+table{
+    white-space: nowrap;
+}
+#TurnInfo{
+    background-color: rgb(199,200,103);
+    height: 434px;
+    width: 20%;
+    float: left;
+}
+#DealersCards_Background{
+    background-color: #c57373;
+    height: 434px;
+    width: 60%;
+    float: left;
+}
+#DealersCards_Generated_Here{
+    display: flex;
+}
+.DealersCards{ 
+    width: 120px;
+    height: 180px;
+    box-shadow: 0 4 px 8 px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+#Actions{
+    background-color: rgb(176, 87, 215);
+    height: 434px;
+    width: 20%;
+    float: right;
+}
+
+.bottom-container{
+    empty-cells: hide;
+}
+#PlayersCards_Background{
+    background-color: #b3d0dc;
+    height: 200px;
+    clear: both;
+}
+#PlayersCards_Generated_Here{
+    display: flex;
+}
+.PlayersCards{
+    width: 120px;
+    height: 180px;
+    box-shadow: 0 4 px 8 px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+#PlayersHash{
+    background-color: #aaa;
+    height: auto;
+    width: 20%;
+    float: left;
+}
+
+#CurrentBet{
+    background-color: #eee;
+    height: auto;
+    width: 60%;
+    float: left;
+}
+
+#makeBet{
+    empty-cells: hide;
+}
+
+#Bet{
+    empty-cells: hide;
+}
+
+#winnings{
+    background-color: #aaa;
+    height: auto;
+    width: 20%;
+    float: right;
+}
+
+.collapse{
+    background-color: #eee;
+    color: rgb(24, 4, 4);
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: center;
+    outline: none;
+    font-size: 15px;
+}
+
+content{
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #f1f1f1;
+}
+
+.options{
+    width: 110px;
+    text-align: top;
+    background-color: lightgray;
+}
+
+td{
+    vertical-align: top;
+    text-align: center;
+}
+
+tr{
+    vertical-align: top;
+}
