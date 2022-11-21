@@ -56,9 +56,13 @@ public class GameState {
 
         int firstUnoccupied = findFirstUnoccupied(this);
 
-        if(this.participants.size() < 3)
+        if(this.participants.size() < 3 && firstUnoccupied != -1)
         {
             this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
+        }
+        else
+        {
+            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
         }
         for(Person P : participants)
         {
@@ -98,7 +102,7 @@ public class GameState {
                     this.CurrentTurn++;
                 }
             }
-            Msg[this.CurrentTurn-1] = "Please await play";
+            Msg[this.CurrentTurn] = "Please await play";
         }//yes, proceed with play
         else
         {

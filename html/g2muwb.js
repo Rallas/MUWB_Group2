@@ -77,7 +77,7 @@ connection.onmessage = function (evt) {             //message reciever
                             i = 0;
                             player_card_count = 0;
 
-                            for(const card of player.hand.deck) 
+                            for(const card in player.hand.deck) 
                             {   hand_index_count = card;
 
                                 if (hand_index_count > 0)              //NOTE: HARDCODED for testing purposes
@@ -119,7 +119,7 @@ connection.onmessage = function (evt) {             //message reciever
                             i = 0;
                             player_card_count = 0;
 
-                            for(const card of player.hand.deck) 
+                            for(const card in player.hand.deck) 
                             {   hand_index_count = card;
 
                                 if (hand_index_count > 0)          //NOTE: HARDCODED for testing purposes
@@ -151,7 +151,7 @@ connection.onmessage = function (evt) {             //message reciever
                 {   j = 0;
                     dealer_card_count = 0;                  //Dealer card image generation sequence
                     
-                    for(const card of player.hand.deck)
+                    for(const card in player.hand.deck)
                     {    hand_index_count = card;
                        
                         if (hand_index_count > 0)     //NOTE: HARCODED FOR TESTING PURPOSES

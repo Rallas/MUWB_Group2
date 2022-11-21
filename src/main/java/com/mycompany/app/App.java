@@ -114,16 +114,26 @@ public class App extends WebSocketServer {
     {
       //find first unoccupied ID
       int firstID = G.findFirstUnoccupied(G);
+      if(firstID == -1)
+      {
+        G.participants.add(0,new Person(6,startWager,G.participants.size()));
+        System.out.println(" not a new game, first empty ID at " + G.participants.size());
+      }
+      else
+      {
+        // join an existing game
+        
+        G.participants.add(0,new Person(6,startWager,firstID));
+        System.out.println(" not a new game, first empty ID at " + firstID);
+      }
       
-      // join an existing game
-      System.out.println(" not a new game");
-      G.participants.add(0,new Person(6,startWager,firstID));
     }
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
     E.PlayerId = G.participants.firstElement().PlayerId;
     E.GameId = G.GameId;            
+    System.out.println("sending id " + E.PlayerId);
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
 
@@ -229,7 +239,7 @@ public class App extends WebSocketServer {
     G.participantsDupe = G.participants.toArray(new Person[G.participants.size()]);
     for(Person P : G.participants)
     {
-      P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
+      P.handDupe = P.hand.toArray(new CardBank[P.hand.size()]);
       P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
     }
 
