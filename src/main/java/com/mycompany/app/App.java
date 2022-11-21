@@ -226,11 +226,11 @@ public class App extends WebSocketServer {
   {
 
     //need to convert each vector to an array to facilitate processing in js
-    G.participants.copyInto(G.participantsDupe);
+    G.participantsDupe = G.participants.toArray(new Person[G.participants.size()]);
     for(Person P : G.participants)
     {
-      P.hand.copyInto(P.handDupe);
-      P.wagers.copyInto(P.wagersDupe);
+      P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
+      P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
     }
 
     GsonBuilder builder = new GsonBuilder();
