@@ -163,7 +163,7 @@ public class App extends WebSocketServer {
             {
               P.timeOut++;
             }
-            if(P.timeOut > 3)
+            if(P.timeOut > 4)
             {
               P.type = PlayerType.BOTHIGH;
               P.agression = 17;
