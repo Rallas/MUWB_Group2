@@ -1,5 +1,5 @@
 var PlayerId = -1;
-var GameId = -1;
+var gameid = -1;
 class UserEvent {  
     Button = -1;
     PlayerId = 0;
@@ -29,10 +29,10 @@ var dealer_card_count = 0;
 
 const UserTypeEventMap = new Map();
 UserTypeEventMap.set(-1, "DEAL");           //Only needed if we have time to switch to User Events w/ an ENUM setup for the events
-UserTypeEventMap.set(-2, "STAND");
-UserTypeEventMap.set(-3, "HIT");
-UserTypeEventMap.set(-4, "SPLIT");
-UserTypeEventMap.set(-5, "DOUBLE");
+UserTypeEventMap.set(0, "STAND");
+UserTypeEventMap.set(1, "HIT");
+UserTypeEventMap.set(2, "SPLIT");
+UserTypeEventMap.set(3, "DOUBLE");
 UserTypeEventMap.set(-6, "SURRENDER");
 
 connection.onmessage = function (evt) {             //message reciever
@@ -77,7 +77,7 @@ connection.onmessage = function (evt) {             //message reciever
                             i = 0;
                             player_card_count = 0;
 
-                            for(const card of player.hand.deck) 
+                            for(const card in player.hand.deck) 
                             {   hand_index_count = card;
 
                                 if (hand_index_count > 0)              //NOTE: HARDCODED for testing purposes
@@ -119,7 +119,7 @@ connection.onmessage = function (evt) {             //message reciever
                             i = 0;
                             player_card_count = 0;
 
-                            for(const card of player.hand.deck) 
+                            for(const card in player.hand.deck) 
                             {   hand_index_count = card;
 
                                 if (hand_index_count > 0)          //NOTE: HARDCODED for testing purposes
@@ -151,7 +151,7 @@ connection.onmessage = function (evt) {             //message reciever
                 {   j = 0;
                     dealer_card_count = 0;                  //Dealer card image generation sequence
                     
-                    for(const card of player.hand.deck)
+                    for(const card in player.hand.deck)
                     {    hand_index_count = card;
                        
                         if (hand_index_count > 0)     //NOTE: HARCODED FOR TESTING PURPOSES
