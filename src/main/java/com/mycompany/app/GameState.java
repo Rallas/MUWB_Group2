@@ -88,7 +88,7 @@ public class GameState {
             Msg[this.CurrentTurn] = "Please Place a Bet";
             for(Person P : participants)
             {
-                if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR)
+                if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
                 {
                     //match wager to minimum wager depth, toggle flag, then increment turn counter.
                     P.wagers.set(P.currentDepth,U.Button);
@@ -112,7 +112,7 @@ public class GameState {
                 //find player object to manipulate
                 for(Person P : participants)
                 {
-                    if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR) 
+                    if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
                     {
                         if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
                         U.Button = 0;
@@ -192,13 +192,13 @@ public class GameState {
                 if(totalHandVal < 22 && totalHandVal > participants.lastElement().count(participants.lastElement().hand.get(0)))
                 {
                     P.winnings = P.winnings + (int)(P.wagers.get(i) * 1.5);
-                    Msg[P.playerID] = "Hand won.";
+                    Msg[P.PlayerId] = "Hand won.";
                 }
                 else
                 {
                     this.piggybank = P.wagers.get(i);
                     P.winnings = P.winnings - P.wagers.get(i);
-                    Msg[P.playerID] = "Hand lost.";
+                    Msg[P.PlayerId] = "Hand lost.";
                 }
             }
             //reset flags
@@ -238,7 +238,7 @@ public class GameState {
         }
         for(Person P : G.participants)
         {
-            isPresent[P.playerID] = 1;
+            isPresent[P.PlayerId] = 1;
         }
         for(int i : isPresent)
         {

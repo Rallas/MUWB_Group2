@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class Person extends Actions{
     PlayerType type; //player (nonzero) or dealer (0). int to allow for possibility of multiple player types.
-    int playerID;
+    int PlayerId;
     //CardBank hand = new CardBank(); //stores cards. array to facilitate looping. position indicates value.
     
     int winnings = 0;
@@ -26,19 +26,19 @@ public class Person extends Actions{
 
     Person(int ID){
         this.type = PlayerType.values()[1];
-        this.playerID = ID;
+        this.PlayerId = ID;
     }*/
 
     Person(int type, int ID){
         this.type = PlayerType.values()[type];
-        this.playerID = ID;
+        this.PlayerId = ID;
         this.hand.add(new CardBank());
         this.wagers.add(0);
     }
     Person(int type, int winnings, int ID){
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
-        this.playerID = ID;
+        this.PlayerId = ID;
         this.hand.add(new CardBank());
         this.wagers.add(0);
     }
@@ -46,7 +46,7 @@ public class Person extends Actions{
     Person(int cutoff, int type, int winnings, int ID){ //bot specific
         this.type = PlayerType.values()[type];
         this.winnings = winnings;
-        this.playerID = ID;
+        this.PlayerId = ID;
         this.agression = cutoff;
         this.hand.add(new CardBank());
         this.wagers.add(0);
@@ -74,7 +74,7 @@ public class Person extends Actions{
         UserEvent U = new UserEvent();
         Random rand = new Random();
         int splitsRemaining = 2; //we don't want bots infinitly splitting, as they are likely to destroy themselves doing so
-        U.PlayerId = this.playerID;
+        U.PlayerId = this.PlayerId;
         U.GameId = G.GameId;
         
         //prio goes dealer, cheater, high, mid, low
@@ -94,7 +94,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTCHEAT)
             {
-                U.PlayerId = this.playerID;
+                U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
                 {
@@ -126,7 +126,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTHIGH)
             {
-                U.PlayerId = this.playerID;
+                U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
                 {
@@ -150,7 +150,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTMID)
             {
-                U.PlayerId = this.playerID;
+                U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
                 {
@@ -169,7 +169,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTLOW)
             {
-                U.PlayerId = this.playerID;
+                U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
                 {
