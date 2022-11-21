@@ -20,7 +20,6 @@ public class GameState {
     {                  
         participants.add(0,new Person(16,0,0,0));  //dealer
 
-        
         shoeBox.fillDeck();
         GameId = 1;
         CurrentTurn = -1;
@@ -87,7 +86,7 @@ public class GameState {
         {
             for(Person P : participants)
             {
-                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR)
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
                 {
                     //match wager to minimum wager depth, toggle flag, then increment turn counter.
                 }
@@ -102,14 +101,14 @@ public class GameState {
             //find player object to manipulate
             for(Person P : participants)
             {
-                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.playerID) && P.type != PlayerType.SPECTATOR) 
+                if ((CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
                 {
                     if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
                     U.Button = 0;
                     // Move is legitimate, lets do what was requested
                     switch(U.Button)
                     {
-                        case 0: //stand case
+                        case -2: //stand case
                         {
                             if(P.currentDepth <= P.splitDepth)
                             {
@@ -122,12 +121,12 @@ public class GameState {
                             }
                             break;
                         }
-                        case 1: //hit
+                        case -3: //hit
                         {
                             P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
                             break;
                         }
-                        case 2: //split
+                        case -4: //split
                         {
                             int targetForSplit = P.Split(P.hand.get(P.currentDepth));
                             if(targetForSplit != -2)
@@ -136,7 +135,7 @@ public class GameState {
                             }
                             break;
                         }
-                        case 3: //double
+                        case -5: //double
                         {
                             P.wagers.set(P.currentDepth,(P.wagers.get(P.currentDepth))*2);
                             break;
@@ -213,7 +212,7 @@ public class GameState {
         }
         for(Person P : G.participants)
         {
-            isPresent[P.playerID] = 1;
+            isPresent[P.PlayerId] = 1;
         }
         for(int i : isPresent)
         {
