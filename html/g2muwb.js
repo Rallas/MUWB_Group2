@@ -41,7 +41,7 @@ connection.onmessage = function (evt) {             //message reciever
     console.log("Message received: " + msg);
     const obj = JSON.parse(msg);                //this makes obj the parsed json string object
 
-    if(!('Turn_Cycle' in obj)){                  //this means the obj was a Server Event 
+    if('PlayerId' in obj){                  //this means the obj was a Server Event 
         
         PlayerId = obj.PlayerId;
         gameid = obj.GameId;
@@ -67,20 +67,20 @@ connection.onmessage = function (evt) {             //message reciever
                 }
             }*/
 
-            for (const player of obj.participants) {             // process the game state
+            for (const player of obj.participantsDupe) {             // process the game state
                
                 if (player.PlayerId != 0)       //shows cards for our player & maps the other players cards to the side view 
                 { 
                     if (player.PlayerId == PlayerId)
                     {
-                        for (var hand of player.hand){
+                        for (var hand of player.handDupe){
                             i = 0;
                             player_card_count = 0;
 
                             for(const card of player.hand.deck) 
                             {   hand_index_count = card;
 
-                                if (hand_index_count > 0 && player_card_count < 2)              //NOTE: HARDCODED for testing purposes
+                                if (hand_index_count > 0)              //NOTE: HARDCODED for testing purposes
                                 {
                                     while(hand_index_count > 0){
                                         var filename = i + ".svg";
@@ -114,7 +114,7 @@ connection.onmessage = function (evt) {             //message reciever
                     }
                     else if (player.PlayerId != PlayerId)           //draws images for other players on our players side Map to show their hands
                     {
-                        for (var hand of player.hand)
+                        for (var hand of player.handDupe)
                         {
                             i = 0;
                             player_card_count = 0;
@@ -122,7 +122,7 @@ connection.onmessage = function (evt) {             //message reciever
                             for(const card of player.hand.deck) 
                             {   hand_index_count = card;
 
-                                if (hand_index_count > 0 && player_card_count < 2)          //NOTE: HARDCODED for testing purposes
+                                if (hand_index_count > 0)          //NOTE: HARDCODED for testing purposes
                                 {
                                     while(hand_index_count > 0)
                                     {
@@ -154,7 +154,7 @@ connection.onmessage = function (evt) {             //message reciever
                     for(const card of player.hand.deck)
                     {    hand_index_count = card;
                        
-                        if (hand_index_count > 0 && dealer_card_count < 2)     //NOTE: HARCODED FOR TESTING PURPOSES
+                        if (hand_index_count > 0)     //NOTE: HARCODED FOR TESTING PURPOSES
                         {    
                             while(hand_index_count > 0)
                             {

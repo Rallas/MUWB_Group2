@@ -19,21 +19,6 @@ public class CardBank {
     int num_of_cards = 0;
     int[] deck = new int[52];           //Each index is a count for the number of cards of that type
     int temp = 0;
-
-    public int card_count() {
-
-        for (int i: deck){
-
-            temp = deck[i];
-
-            while(temp > 0){
-                temp--;
-                num_of_cards++;
-            }
-        }
-
-        return num_of_cards;
-    }
     /*
     Kind and Suite are represented by index.
 
