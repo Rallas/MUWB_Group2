@@ -107,6 +107,7 @@ public class GameState {
         System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
         int hasWagered = 1;
         int hasGone = 1;
+        int phase = 0;
         for(Person P : participants)
         {
             if(P.hasWagered == 0 && P.type != PlayerType.SPECTATOR)
@@ -121,7 +122,20 @@ public class GameState {
                 hasGone = 0;
             }
         }
-        if(hasWagered == 0) //have bets been collected?
+        if(hasWagered == 0)
+        {
+            phase = 0;
+        }
+        else if(hasGone == 0 && hasWagered == 1)
+        {
+            phase = 1;
+        }
+        else if (hasGone == 1 && hasWagered == 1)
+        {
+            phase = 2;
+        }
+
+        if(phase == 0) //have bets been collected?
         {
             Msg[this.CurrentTurn] = "Please Place a Bet";
             for(Person P : participants)
@@ -139,15 +153,19 @@ public class GameState {
             
         }//yes, proceed with play
         else
+        if(phase == 1)
         {
             //reset turn counter now that all have bet, but only once
-            if(this.CurrentTurn > this.participants.size()-1 && hasGone == 0)
+            if(this.CurrentTurn > participants.size()-1 && hasGone == 0)
             {
                 this.CurrentTurn = 0;
             } 
             if(hasWagered == 1)
             {
-                Msg[this.CurrentTurn] = "It is your turn to play.";
+                if(Msg[this.CurrentTurn] == "Please await play")
+                {
+                    Msg[this.CurrentTurn] = "It is your turn to play.";
+                }
                 //find player object to manipulate
                 for(Person P : participants)
                 {
@@ -171,17 +189,17 @@ public class GameState {
                                 else
                                 {
                                     P.hasGone = 1;
+                                    Msg[this.CurrentTurn] = "Please await tally";
                                     this.CurrentTurn++;
-                                    Msg[this.CurrentTurn-1] = "Please await tally";
                                 }
                                 break;
                             }
                             case -3: //hit
                             {
                                 System.out.println("\n\nType " + P.type + " id " + P.PlayerId + "attempting hit.\n");
-                                System.out.println("p hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
+                                System.out.println("\tp hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
                                 P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-                                System.out.println("p hand after hit: " + gson.toJson(P.hand.get(P.currentDepth)) + "\n\n");
+                                System.out.println("\tp hand after hit: " + gson.toJson(P.hand.get(P.currentDepth)) + "\n\n");
                                 
                                 Msg[this.CurrentTurn] = "Hitting on this hand.";
                                 break;
@@ -217,7 +235,7 @@ public class GameState {
 
                     
                 }
-                if(hasGone == 1)
+                if(phase == 2)
                 {
                     this.Cleanup();
                 }

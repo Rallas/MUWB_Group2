@@ -12,14 +12,19 @@ public class Actions {
         int currentTarget = -1;
         int acceptedTarget = -1;
         currentTarget = rand.nextInt(52);
+        
         while(acceptedTarget == -1)
         {
             if(stack.deck[currentTarget] > 0)
             {
                 acceptedTarget = currentTarget;
             }
-            currentTarget = rand.nextInt(52);
+            else
+            {
+                currentTarget = rand.nextInt(52);
+            }
         }
+        System.out.println("\tCurrent random card value of " + currentTarget);
         return acceptedTarget;
     }
 
