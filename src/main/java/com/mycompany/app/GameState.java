@@ -16,6 +16,8 @@ public class GameState {
     int piggybank=0;
     Random rand = new Random();
 
+    Person[] participantsDupe;
+
     GameState()
     {                  
         participants.add(0,new Person(16,0,0,0));  //dealer
@@ -98,7 +100,6 @@ public class GameState {
             }
             Msg[this.CurrentTurn-1] = "Please await play";
         }//yes, proceed with play
-        
         else
         {
             //reset turn counter now that all have bet, but only once
@@ -115,7 +116,10 @@ public class GameState {
                     if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
                     {
                         if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
-                        U.Button = 0;
+                        {
+                            U.Button = 0;
+                            Msg[this.CurrentTurn] = "You've gone bust!";
+                        }
                         // Move is legitimate, lets do what was requested
                         switch(U.Button)
                         {

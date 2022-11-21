@@ -122,7 +122,7 @@ public class App extends WebSocketServer {
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.firstElement().PlayerId;
+    E.PlayerId = G.participants.firstElement().playerID;
     E.GameId = G.GameId;            
     // allows the websocket to give us the Game when a message arrives
     conn.setAttachment(G);
@@ -133,11 +133,7 @@ public class App extends WebSocketServer {
     System.out.println(gson.toJson(E));
 
     // The state of the game has changed, so lets send it to everyone
-    String jsonString;
-    jsonString = gson.toJson(G);
-
-    System.out.println(jsonString);
-    broadcast(jsonString);
+    packageAndBroadcast(G);
   }
 
   public void startTimers()
@@ -159,7 +155,7 @@ public class App extends WebSocketServer {
               P.TakeTurn(G);
               
             }
-            if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
+            if((G.CurrentTurn == P.playerID) && P.type == PlayerType.PLAYER)
             {
               P.timeOut++;
             }
@@ -169,13 +165,7 @@ public class App extends WebSocketServer {
               P.agression = 17;
             }
           }
-          String jsonString;
-          GsonBuilder builder = new GsonBuilder();
-          Gson gson = builder.create();
-          jsonString = gson.toJson(G);
-
-          System.out.println(jsonString);
-          broadcast(jsonString);
+          packageAndBroadcast(G);
         }
         
       }
@@ -209,11 +199,7 @@ public class App extends WebSocketServer {
 
     // send out the game state every time
     // to everyone
-    String jsonString;
-    jsonString = gson.toJson(G);
-
-    System.out.println(jsonString);
-    broadcast(jsonString);
+    packageAndBroadcast(G);
   }
 
   @Override
@@ -234,6 +220,26 @@ public class App extends WebSocketServer {
   public void onStart() {
     System.out.println("Server started!");
     setConnectionLostTimeout(0);
+  }
+
+  public void packageAndBroadcast(GameState G)
+  {
+
+    //need to convert each vector to an array to facilitate processing in js
+    G.participants.copyInto(G.participantsDupe);
+    for(Person P : G.participants)
+    {
+      P.hand.copyInto(P.handDupe);
+      P.wagers.copyInto(P.wagersDupe);
+    }
+
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
+    String jsonString;
+    jsonString = gson.toJson(G);
+
+    System.out.println(jsonString);
+    broadcast(jsonString);
   }
 
   public static void main(String[] args) {
