@@ -1,5 +1,5 @@
 var PlayerId = -1;
-var GameId = -1;
+var gameid = -1;
 class UserEvent {  
     Button = -1;
     PlayerId = 0;
@@ -29,10 +29,10 @@ var dealer_card_count = 0;
 
 const UserTypeEventMap = new Map();
 UserTypeEventMap.set(-1, "DEAL");           //Only needed if we have time to switch to User Events w/ an ENUM setup for the events
-UserTypeEventMap.set(-2, "STAND");
-UserTypeEventMap.set(-3, "HIT");
-UserTypeEventMap.set(-4, "SPLIT");
-UserTypeEventMap.set(-5, "DOUBLE");
+UserTypeEventMap.set(0, "STAND");
+UserTypeEventMap.set(1, "HIT");
+UserTypeEventMap.set(2, "SPLIT");
+UserTypeEventMap.set(3, "DOUBLE");
 UserTypeEventMap.set(-6, "SURRENDER");
 
 connection.onmessage = function (evt) {             //message reciever

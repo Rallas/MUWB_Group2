@@ -99,13 +99,15 @@ public class App extends WebSocketServer {
     }
 
     // No matches ? Create a new Game.
+    int targetID;
     if (G == null) 
     {
       G = new GameState();
       G.GameId = GameId;
       GameId++;
       // Add the first player
-      G.participants.add(0,new Person(6,startWager,1));    
+      G.participants.add(new Person(6,startWager,1));   
+      targetID = 1; 
       ActiveGames.add(G);
       System.out.println(" creating a new Game");
       G.StartGame(G.participants);
@@ -116,14 +118,16 @@ public class App extends WebSocketServer {
       int firstID = G.findFirstUnoccupied(G);
       if(firstID == -1)
       {
-        G.participants.add(0,new Person(6,startWager,G.participants.size()));
+        G.participants.add(new Person(6,startWager,G.participants.size()));
+        targetID = G.participants.size();
         System.out.println(" not a new game, first empty ID at " + G.participants.size());
       }
       else
       {
         // join an existing game
         
-        G.participants.add(0,new Person(6,startWager,firstID));
+        G.participants.add(new Person(6,startWager,firstID));
+        targetID = firstID;
         System.out.println(" not a new game, first empty ID at " + firstID);
       }
       
@@ -131,7 +135,7 @@ public class App extends WebSocketServer {
     System.out.println("G.participants are " + G.participants);
     // create an event to go to only the new player
     ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.firstElement().PlayerId;
+    E.PlayerId = G.participants.get(targetID).PlayerId;
     E.GameId = G.GameId;            
     System.out.println("sending id " + E.PlayerId);
     // allows the websocket to give us the Game when a message arrives

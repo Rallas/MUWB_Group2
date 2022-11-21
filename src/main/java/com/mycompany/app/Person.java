@@ -83,6 +83,7 @@ public class Person extends Actions{
         {
             if(this.type == PlayerType.DEALER)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.Button = 1;
                 G.Update(U); //messy. Allows hit, but attempts to force it. Technically logically sound but don like it one bit
                 while(this.count(this.hand.get(currentDepth)) < 16 && myTurn == 1)
@@ -95,6 +96,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTCHEAT)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
@@ -127,6 +129,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTHIGH)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
@@ -151,6 +154,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTMID)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
@@ -170,6 +174,7 @@ public class Person extends Actions{
             }
             if(this.type == PlayerType.BOTLOW)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
                 while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
@@ -187,10 +192,12 @@ public class Person extends Actions{
         {
             if(this.type == PlayerType.DEALER)
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + " making wager.");
                 U.Button = 0;
             }
             else
             {
+                System.out.println("Type " + this.type + " id " + this.PlayerId + " making wager.");
                 U.Button = (this.winnings * 1/3) + rand.nextInt(this.winnings * 2/3);
             }
             myTurn = G.Update(U);

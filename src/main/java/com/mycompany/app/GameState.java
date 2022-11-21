@@ -58,11 +58,11 @@ public class GameState {
 
         if(this.participants.size() < 3 && firstUnoccupied != -1)
         {
-            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
+            this.participants.add(new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
         }
         else
         {
-            this.participants.add(0,new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
+            this.participants.add(new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
         }
         for(Person P : participants)
         {
@@ -89,7 +89,7 @@ public class GameState {
         System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
         
         
-        if(participants.lastElement().hasWagered == 0) //have bets been collected?
+        if(participants.firstElement().hasWagered == 0) //have bets been collected?
         {
             Msg[this.CurrentTurn] = "Please Place a Bet";
             for(Person P : participants)
@@ -97,6 +97,7 @@ public class GameState {
                 if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
                 {
                     //match wager to minimum wager depth, toggle flag, then increment turn counter.
+                    System.out.println("wager made by " + P.PlayerId + " of " + U.Button);
                     P.wagers.set(P.currentDepth,U.Button);
                     P.hasWagered = 1;
                     this.CurrentTurn++;
@@ -107,11 +108,11 @@ public class GameState {
         else
         {
             //reset turn counter now that all have bet, but only once
-            if(this.CurrentTurn > this.participants.size()-1 && this.participants.lastElement().hasGone == 0)
+            if(this.CurrentTurn > this.participants.size()-1 && this.participants.firstElement().hasGone == 0)
             {
                 this.CurrentTurn = 0;
             } 
-            if(participants.lastElement().hasWagered == 1)
+            if(participants.firstElement().hasWagered == 1)
             {
                 Msg[this.CurrentTurn] = "It is your turn to play.";
                 //find player object to manipulate
@@ -144,7 +145,11 @@ public class GameState {
                             }
                             case 1: //hit
                             {
+                                System.out.println("\n\nType " + P.type + " id " + P.PlayerId + "attempting hit.\n");
+                                System.out.println("p hand before hit: " + P.hand.get(P.currentDepth));
                                 P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+                                System.out.println("p hand after hit: " + P.hand.get(P.currentDepth) + "\n\n");
+                                
                                 Msg[this.CurrentTurn] = "Hitting on this hand.";
                                 break;
                             }
@@ -176,7 +181,7 @@ public class GameState {
                         return 0; //turn was taken
                     }
                     //check to make sure there are players waiting. if not, cleanup
-                    if(participants.lastElement().hasGone == 1)
+                    if(participants.firstElement().hasGone == 1)
                     {
                         this.Cleanup();
                     }
