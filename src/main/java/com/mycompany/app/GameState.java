@@ -161,7 +161,7 @@ public class GameState {
                         // Move is legitimate, lets do what was requested
                         switch(U.Button)
                         {
-                            case 0: //stand case
+                            case -2: //stand case
                             {
                                 if(P.currentDepth < P.splitDepth)
                                 {
@@ -176,7 +176,7 @@ public class GameState {
                                 }
                                 break;
                             }
-                            case 1: //hit
+                            case -3: //hit
                             {
                                 System.out.println("\n\nType " + P.type + " id " + P.PlayerId + "attempting hit.\n");
                                 System.out.println("p hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
@@ -186,7 +186,7 @@ public class GameState {
                                 Msg[this.CurrentTurn] = "Hitting on this hand.";
                                 break;
                             }
-                            case 2: //split
+                            case -4: //split
                             {
                                 int targetForSplit = P.Split(P.hand.get(P.currentDepth));
                                 if(targetForSplit != -2)
@@ -196,7 +196,7 @@ public class GameState {
                                 }
                                 break;
                             }
-                            case 3: //double
+                            case -5: //double
                             {
                                 P.wagers.set(P.currentDepth,(P.wagers.get(P.currentDepth))*2);
                                 Msg[this.CurrentTurn] = "Wager on this hand doubled.";
