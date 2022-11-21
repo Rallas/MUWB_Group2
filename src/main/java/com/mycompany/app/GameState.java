@@ -1,7 +1,12 @@
 package com.mycompany.app;
 
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import java.util.Random;
+import java.util.Iterator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.util.Collections;
 
 import com.mycompany.app.UserEvent.UserEventType;
 
@@ -15,6 +20,8 @@ public class GameState {
     CardBank shoeBox = new CardBank();
     int piggybank=0;
     Random rand = new Random();
+    GsonBuilder builder = new GsonBuilder();
+    Gson gson = builder.create();
 
     Person[] participantsDupe;
 
@@ -54,6 +61,8 @@ public class GameState {
         //when the update function determines that all players have gone, it calls a clean-up function that doles winnings and 
         //preps the gamestate for closing/cycling. 
 
+        checkShoe();
+
         int firstUnoccupied = findFirstUnoccupied(this);
 
         if(this.participants.size() < 3 && firstUnoccupied != -1)
@@ -83,13 +92,36 @@ public class GameState {
 
     }
 
+
+    public void checkShoe()
+    {
+        Person P = new Person();
+        if(P.count(this.shoeBox) < 150)
+        this.shoeBox.fillDeck();
+    }
+
+
     //Reads in the user event, updates accordingly
     public int Update(UserEvent U)
     {
         System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
-        
-        
-        if(participants.firstElement().hasWagered == 0) //have bets been collected?
+        int hasWagered = 1;
+        int hasGone = 1;
+        for(Person P : participants)
+        {
+            if(P.hasWagered == 0 && P.type != PlayerType.SPECTATOR)
+            {
+                hasWagered = 0;
+            }
+        }
+        for(Person P : participants)
+        {
+            if(P.hasGone == 0 && P.type != PlayerType.SPECTATOR)
+            {
+                hasGone = 0;
+            }
+        }
+        if(hasWagered == 0) //have bets been collected?
         {
             Msg[this.CurrentTurn] = "Please Place a Bet";
             for(Person P : participants)
@@ -100,19 +132,20 @@ public class GameState {
                     System.out.println("wager made by " + P.PlayerId + " of " + U.Button);
                     P.wagers.set(P.currentDepth,U.Button);
                     P.hasWagered = 1;
+                    Msg[this.CurrentTurn] = "Please await play";
                     this.CurrentTurn++;
                 }
             }
-            Msg[this.CurrentTurn] = "Please await play";
+            
         }//yes, proceed with play
         else
         {
             //reset turn counter now that all have bet, but only once
-            if(this.CurrentTurn > this.participants.size()-1 && this.participants.firstElement().hasGone == 0)
+            if(this.CurrentTurn > this.participants.size()-1 && hasGone == 0)
             {
                 this.CurrentTurn = 0;
             } 
-            if(participants.firstElement().hasWagered == 1)
+            if(hasWagered == 1)
             {
                 Msg[this.CurrentTurn] = "It is your turn to play.";
                 //find player object to manipulate
@@ -130,7 +163,7 @@ public class GameState {
                         {
                             case 0: //stand case
                             {
-                                if(P.currentDepth <= P.splitDepth)
+                                if(P.currentDepth < P.splitDepth)
                                 {
                                     P.currentDepth++;
                                     Msg[this.CurrentTurn] = "Swapping to next hand...";
@@ -146,9 +179,9 @@ public class GameState {
                             case 1: //hit
                             {
                                 System.out.println("\n\nType " + P.type + " id " + P.PlayerId + "attempting hit.\n");
-                                System.out.println("p hand before hit: " + P.hand.get(P.currentDepth));
+                                System.out.println("p hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
                                 P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-                                System.out.println("p hand after hit: " + P.hand.get(P.currentDepth) + "\n\n");
+                                System.out.println("p hand after hit: " + gson.toJson(P.hand.get(P.currentDepth)) + "\n\n");
                                 
                                 Msg[this.CurrentTurn] = "Hitting on this hand.";
                                 break;
@@ -181,29 +214,33 @@ public class GameState {
                         return 0; //turn was taken
                     }
                     //check to make sure there are players waiting. if not, cleanup
-                    if(participants.firstElement().hasGone == 1)
-                    {
-                        this.Cleanup();
-                    }
+
+                    
+                }
+                if(hasGone == 1)
+                {
+                    this.Cleanup();
                 }
             }
         }
         return -1; //it's not your turn, or cleanup has concluded and nothing will recieve this
     }
 
-    public void Cleanup()
+    public synchronized void Cleanup() 
     {
         int totalHandVal = 0;
         
-        for(Person P : participants)
+        for(Iterator<Person> it = participants.iterator(); it.hasNext();)
         {
+            Person P = it.next();
             //iterate through each player, totalling hands and dealing bets.
             totalHandVal = 0;
             for(int i = 0; i < P.hand.size() ; i++)
             {
                 totalHandVal = P.count(P.hand.get(i));
-                if(totalHandVal < 22 && totalHandVal > participants.lastElement().count(participants.lastElement().hand.get(0)))
+                if(totalHandVal < 22 && totalHandVal > participants.firstElement().count(participants.firstElement().hand.get(0)) && P.type != PlayerType.DEALER)
                 {
+                    
                     P.winnings = P.winnings + (int)(P.wagers.get(i) * 1.5);
                     Msg[P.PlayerId] = "Hand won.";
                 }
@@ -214,6 +251,16 @@ public class GameState {
                     Msg[P.PlayerId] = "Hand lost.";
                 }
             }
+            try
+            {
+                wait(7000);
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            
+
             //reset flags
             P.hasGone = 0;
             P.hasWagered = 0;
@@ -226,9 +273,9 @@ public class GameState {
             P.hand.add(new CardBank());
             P.wagers.add(0);
             //eject players with no money 
-            if(P.winnings < 1)
+            if(P.winnings < 1 && P.type != PlayerType.DEALER)
             {
-                participants.remove(P);
+                it.remove();
             }
             
         }
@@ -239,6 +286,26 @@ public class GameState {
         Msg[2] = "StartGame: Await turn plr. 2";
         Msg[3] = "StartGame: Await turn plr. 3";
         Msg[4] = "StartGame: Await turn plr. 4";
+
+        //check the shoe
+        checkShoe();
+
+        //redeal and let spectators in 
+        for(Person P : participants)
+        {
+            if(P.type == PlayerType.SPECTATOR)
+            {
+                P.type = PlayerType.PLAYER;
+            }
+            if(P.type != PlayerType.DEALER)
+            {
+                P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
+            }
+            else
+            {
+                P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+            }
+        }
     }
 
     public int findFirstUnoccupied(GameState G)

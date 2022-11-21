@@ -60,13 +60,6 @@ public class Actions {
         return targetCard;
     }
 
-    public int Bet(int wager)
-    {
-        //used to increase the player's bet before the deal
-        //Person.setWager(50);
-        return 0; 
-    }
-
     public int getCardVal(int index, int acesVal)
     {
         int val = 0;
@@ -89,6 +82,7 @@ public class Actions {
                 val = 10;
             }
         }
+        System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
         return val;
     }
 
@@ -97,19 +91,31 @@ public class Actions {
         int[] stack = deck.deck;
         int count=0;
         int acesHigh = 1;
-        for(int i : stack)
+        int miniStack = 0;
+        for(int i =0; i<52;i++)
         {
-            count = count + getCardVal(i,acesHigh);
+            if(stack[i] > 0)
+            {
+                miniStack = stack[i] * getCardVal(i,acesHigh);
+                count = count + miniStack;
+            }
+            
         }
         if(count > 21)
         {
             count = 0;
             acesHigh = 0;
-            for(int i : stack)
+            for(int i =0; i<52;i++)
             {
-                count = count + getCardVal(i,acesHigh);
+                if(stack[i] > 0)
+                {
+                    miniStack = stack[i] * getCardVal(i,acesHigh);
+                    count = count + miniStack;
+                }
+                
             }
         }
+        System.out.println("\tCounting passed with val " + count + "\n");
         return count;
 
     }
