@@ -17,13 +17,13 @@ public class GameState {
     public int CurrentTurn;
     public String[] Msg = new String [5];
     public PlayerType[] Button;         //may be recycled to inform players about the current options for any given turn
-    CardBank shoeBox = new CardBank();
-    int piggybank=0;
-    Random rand = new Random();
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
+    transient CardBank shoeBox = new CardBank();
+    transient int piggybank=0;
+    transient Random rand = new Random();
+    transient GsonBuilder builder = new GsonBuilder();
+    transient Gson gson = builder.create();
 
-    Person[] participantsDupe;
+    transient Person[] participantsDupe;
 
     GameState()
     {                  

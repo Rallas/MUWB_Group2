@@ -206,7 +206,7 @@ public class App extends WebSocketServer {
     // Bring in the data from the webpage
     // A UserEvent is all that is allowed at this point
     GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
+    Gson gson = builder.setPrettyPrinting().create();
     UserEvent U = gson.fromJson(message, UserEvent.class);
     System.out.println(U.Button);
 
@@ -251,7 +251,7 @@ public class App extends WebSocketServer {
     }
 
     GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
+    Gson gson = builder.setPrettyPrinting().create();
     String jsonString;
     jsonString = gson.toJson(G);
 
