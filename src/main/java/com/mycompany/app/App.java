@@ -238,15 +238,6 @@ public class App extends WebSocketServer {
 
   public void packageAndBroadcast(GameState G)
   {
-
-    //need to convert each vector to an array to facilitate processing in js
-    G.participantsDupe = G.participants.toArray(new Person[G.participants.size()]);
-    for(Person P : G.participants)
-    {
-      P.handDupe = P.hand.toArray(new CardBank[P.hand.size()]);
-      P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
-    }
-
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
     String jsonString;

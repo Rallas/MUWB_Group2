@@ -16,8 +16,6 @@ public class GameState {
     int piggybank=0;
     Random rand = new Random();
 
-    Person[] participantsDupe;
-
     GameState()
     {                  
         participants.add(0,new Person(16,0,0,0));  //dealer
@@ -86,7 +84,7 @@ public class GameState {
     //Reads in the user event, updates accordingly
     public int Update(UserEvent U)
     {
-        System.out.println("The User Event is " + U.PlayerId + " " + U.Button);
+        System.out.println("The User Event is Player: " + U.PlayerId + " chose Choice: " + U.Button);
         
         
         if(participants.firstElement().hasWagered == 0) //have bets been collected?

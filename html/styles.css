@@ -4,6 +4,10 @@
     width: 100%;
 }
 
+#topMessage{
+   font-size: 3em;
+}
+
 hr{
     margin-bottom: 0;
     border-width: 0;
@@ -34,7 +38,7 @@ table{
 #TurnInfo{
     background-color: rgb(199,200,103);
     height: 434px;
-    width: 20%;
+    width: 32%;
     float: left;
 }
 #DealersCards_Background{
@@ -55,7 +59,7 @@ table{
 #Actions{
     background-color: rgb(176, 87, 215);
     height: 434px;
-    width: 20%;
+    width: 8%;
     float: right;
 }
 

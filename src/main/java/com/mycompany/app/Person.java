@@ -18,9 +18,6 @@ public class Person extends Actions{
     int hasWagered = 0;
     int hasGone = 0; //starting to get ugly with flags- stinks
 
-    CardBank[] handDupe;
-    Integer[] wagersDupe;
-
     /*Person(){ //empty constructor for creating  scanners
         this.type = PlayerType.values()[1];
     }
