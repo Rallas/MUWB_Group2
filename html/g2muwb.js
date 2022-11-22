@@ -25,9 +25,6 @@ var j = 0;
 var k = 0;
 var hand_index_count = 0;
 var cards_generated = 0;
-var player_card_count = 0;
-var dealer_card_count = 0;
-var other_players_card_count = 0;
 
 connection.onmessage = function (evt) {             //message reciever
     var msg;
@@ -52,9 +49,8 @@ connection.onmessage = function (evt) {             //message reciever
         {      
             for (const player of obj.participants)             // process the game state
             {                   
-                if (player.PlayerId == 0)
+                if (player.PlayerId == 0)           //Dealer card image generation sequence
                 {  
-                    //dealer_card_count = 0;                  //Dealer card image generation sequence
                     console.log("\nEntered DEALER CARD GEN ROUTINE\n");
 
                     for(const hand of player.hand)
@@ -64,7 +60,7 @@ connection.onmessage = function (evt) {             //message reciever
                         {                      
                             hand_index_count = hand.deck[card];
 
-                            if (hand_index_count > 0 && dealer_card_count < 9)     //NOTE: HARCODED FOR TESTING PURPOSES
+                            if (hand_index_count > 0)     //NOTE: HARCODED FOR TESTING PURPOSES
                             {    
 
                                 while(hand_index_count > 0)
@@ -85,7 +81,6 @@ connection.onmessage = function (evt) {             //message reciever
                                     MapParent.appendChild(img_for_map);
 
                                     hand_index_count--;
-                                    dealer_card_count++;
                                 }
                                 j++;
                             }
@@ -100,7 +95,7 @@ connection.onmessage = function (evt) {             //message reciever
                 }                       //<- marks the end of the dealer card drawing routine
                 else if (player.PlayerId != 0)       //shows cards for our player & maps the other players cards to the side view 
                 { 
-                    if (player.PlayerId == PlayerId && player_card_count < 9)   //worked w/ == 1. What follows is the card generation sequence for OUR PLAYER
+                    if (player.PlayerId == PlayerId)   //worked w/ == 1. What follows is the card generation sequence for OUR PLAYER
                     {
                         //player_card_count = 0;        //for keeping track of the total number of player cards (needs to be included or else will take on junk value (2))
 
@@ -111,9 +106,8 @@ connection.onmessage = function (evt) {             //message reciever
                             {          
                                 hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
 
-                                if (hand_index_count > 0 && player_card_count < 9)  //if the index count is < 0 we have a card of this type & need to print it. NOTE: Player_card_count is TEMP HARDCODED til we get a var for the card count per deck
+                                if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
                                 {   
-                                    
                                     while(hand_index_count > 0)//repeats to deal w/ multiples of 1 type of card
                                     {   
                                         var filename = i + ".svg";                                  //Card graphics are numbered from 0 - 51
@@ -133,7 +127,6 @@ connection.onmessage = function (evt) {             //message reciever
                                         MapParent_4_player.appendChild(img_for_map_4_player);
 
                                         hand_index_count--; //lowers the index by 1 each time a card is printed
-                                        player_card_count++;    //increased to reflect that a card has been added to the players hand graphically
                                     }
                                     i++;            //the cycle var should be incremented every time 1 type of card is printed
                                 }
@@ -146,9 +139,8 @@ connection.onmessage = function (evt) {             //message reciever
                         var winnings_info = document.querySelector("#winning");
                         winnings_info.innerHTML = player.winnings;
                     }
-                    else if ((player.PlayerId != 0 && player.PlayerId != PlayerId) && other_players_card_count < 9)    //draws images for other players on our players side Map to show their hands
+                    else if ((player.PlayerId != 0 && player.PlayerId != PlayerId))    //draws images for other players on our players side Map to show their hands
                     {
-                        other_players_card_count = 0;
                         for (const hand of player.hand)
                         {
                             k = 0;
@@ -156,7 +148,7 @@ connection.onmessage = function (evt) {             //message reciever
                             for(const card in hand.deck) 
                             {   hand_index_count = hand.deck[card];
 
-                                if (hand_index_count > 0 && other_players_card_count < 9)          //NOTE: OPTC < 5 HARDCODED til a Var for hand size is implemented in Java
+                                if (hand_index_count > 0)          //NOTE: OPTC < 5 HARDCODED til a Var for hand size is implemented in Java
                                 {
 
                                     while(hand_index_count > 0)
@@ -172,7 +164,6 @@ connection.onmessage = function (evt) {             //message reciever
                                         MapParenti.appendChild(img_wrt_others);
 
                                         hand_index_count--;
-                                        other_players_card_count++;
                                     }
                                     k++;
                                 }
