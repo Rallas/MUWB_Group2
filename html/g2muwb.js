@@ -29,14 +29,6 @@ var player_card_count = 0;
 var dealer_card_count = 0;
 var other_players_card_count = 0;
 
-const UserTypeEventMap = new Map();
-UserTypeEventMap.set(-1, "DEAL");           //Only needed if we have time to switch to User Events w/ an ENUM setup for the events
-UserTypeEventMap.set(0, "STAND");
-UserTypeEventMap.set(1, "HIT");
-UserTypeEventMap.set(2, "SPLIT");
-UserTypeEventMap.set(3, "DOUBLE");
-UserTypeEventMap.set(-6, "SURRENDER");
-
 connection.onmessage = function (evt) {             //message reciever
     var msg;
     msg = evt.data;
@@ -53,13 +45,13 @@ connection.onmessage = function (evt) {             //message reciever
         console.log("A ServerEvent was recieved && you are now Player: " + PlayerId + " in a game\n")
     }
     else if ('CurrentTurn' in obj)                 //this is for when the sent msg is a Game class object
-    {     console.log("A GameState was recieved: " + obj + "\n") 
+    {   console.log("A GameState was recieved: " + obj + "\n") 
+        clearPrevCards();
+
         if (gameid == obj.GameId)                     // only pay attention to this game
         {      
             for (const player of obj.participants)             // process the game state
-            {   
-                console.log("A Player id is: " + player.PlayerId + " and is of type: " + player.type);
-                
+            {                   
                 if (player.PlayerId == 0)
                 {  
                     //dealer_card_count = 0;                  //Dealer card image generation sequence
@@ -154,7 +146,7 @@ connection.onmessage = function (evt) {             //message reciever
                         var winnings_info = document.querySelector("#winning");
                         winnings_info.innerHTML = player.winnings;
                     }
-                    else if ((player.PlayerId != 0 || player.PlayerId == PlayerId) && other_players_card_count < 9)    //draws images for other players on our players side Map to show their hands
+                    else if ((player.PlayerId != 0 && player.PlayerId != PlayerId) && other_players_card_count < 9)    //draws images for other players on our players side Map to show their hands
                     {
                         other_players_card_count = 0;
                         for (const hand of player.hand)
@@ -198,19 +190,14 @@ connection.onmessage = function (evt) {             //message reciever
 
 
 function buttonclick(i) {
-    clearPrevCards();
     U = new UserEvent();            //makes an event to represent the input of a player action
     U.PlayerId = PlayerId;
     U.GameId = gameid;
-    if (i > 0){
+    if (i >= 0){
         U.Event = "BET";
         U.Button = document.getElementById("sendBet").value;
     }
-    else if (i == -6) {
-        console.log("Cards should be cleared");
-    }
     else{
-        U.Event = UserTypeEventMap.get(i);
         U.Button = i;   
     }
     connection.send(JSON.stringify(U));             //Sends Dealer/Player Input to App?
@@ -232,22 +219,28 @@ function showBet(){
 }
 
 function clearPrevCards(){
-    var clear5 = document.getElementById("P2_Map");         //Clears OUR PLAYER CARD IMAGES    
-    clear5.innerHTML = "";
-    var clear6 = document.getElementById("P3_Map");       
-    clear6.innerHTML = "";
-    var clear7 = document.getElementById("P4_Map");       
-    clear7.innerHTML = "";
-    var clear8 = document.getElementById("P1_Map");       
-    clear8.innerHTML = "";
 
-    var clear = document.getElementById("DealersCards_Generated_Here");         //Clears DEALER CARD IMAGES
-    clear.innerHTML = "";
-    var clear2 = document.getElementById("DealerMap");       
+    var clear1 = document.getElementById("P1_Map");         //Clears OUR PLAYER CARD IMAGES  
+    var clear2 = document.getElementById("P2_Map");       
+    var clear3 = document.getElementById("P3_Map");       
+    var clear4 = document.getElementById("P4_Map");       
+    var clear5 = document.getElementById("DealerMap");       
+
+    if (clear1 != null && clear2 != null && clear3 != null && clear4 != null && clear5 != null)
+    {
+    clear1.innerHTML = "";
     clear2.innerHTML = "";
-
-    var clear3 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD IMAGES    
     clear3.innerHTML = "";
-    var clear4 = document.getElementById("Game_Play_Map_Cards");       
-    clear4.innerHTML = ""
+    clear4.innerHTML = "";
+    clear5.innerHTML = "";
+    }
+
+    var clear6 = document.getElementById("DealersCards_Generated_Here");         //Clears DEALER CARD MAIN DISPLAY IMAGES
+    var clear7 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD MAIN DISPLAY IMAGES    
+
+    if (clear6 != null && clear7 != null)
+    {
+    clear6.innerHTML = "";
+    clear7.innerHTML = "";
+    }
 }
