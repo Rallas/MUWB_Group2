@@ -21,19 +21,19 @@ public class GameState {
     CardBank shoeBox = new CardBank();
     int piggybank=0;
     Random rand = new Random();
-    GsonBuilder builder = new GsonBuilder();
-    Gson gson = builder.create();
+    transient GsonBuilder  builder = new GsonBuilder();
+    transient Gson gson = builder.create();
 
     GameState()
     {                  
-        participants.add(0,new Person(16,0,0,0));  //dealer
+        participants.add(0,new Person(16,0,0,5));  //dealer
 
         
         shoeBox.fillDeck();
         GameId = 1;
         CurrentTurn = -1;
         
-        Msg[0] = "DEALER MSG";
+        Msg[0] = "STANDBY";
         Msg[1] = "STANDBY";
         Msg[2] = "STANDBY";
         Msg[3] = "STANDBY";
@@ -46,6 +46,8 @@ public class GameState {
         Person P = new Person();
         if(P.count(this.shoeBox) < 150)
         this.shoeBox.fillDeck();
+        this.shoeBox.updateCardinality();
+        System.out.println("\tshoe contains " + this.shoeBox.cardinality);
     }
 
 
@@ -154,7 +156,7 @@ public class GameState {
         if(phase == 1)
         {
             //reset turn counter now that all have bet, but only once
-            if(this.CurrentTurn > participants.size()-1 && hasGone == 0)
+            if(this.CurrentTurn >= participants.size()-1 && hasGone == 0)
             {
                 this.CurrentTurn = 0;
             } 
@@ -304,7 +306,7 @@ public class GameState {
         Msg[2] = "StartGame: Await turn plr. 2";
         Msg[3] = "StartGame: Await turn plr. 3";
         Msg[4] = "StartGame: Await turn plr. 4";
-    //check the shoe
+        //check the shoe
         checkShoe();
 
         //redeal and let spectators in 
@@ -323,14 +325,13 @@ public class GameState {
                 P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
             }
         }
-
-
+        
     }
 
     public int findFirstUnoccupied(GameState G)
     {
         int firstID = -1;
-        int[] isPresent = new int[5];
+        int[] isPresent = new int[6];
         for(int i = 0; i < 5; i++)
         {
             isPresent[i] = 0;

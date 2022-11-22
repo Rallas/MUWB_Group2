@@ -64,6 +64,8 @@ public class Person extends Actions{
         this.splitDepth++;
         this.hand.add(newHand);
         this.wagers.add(this.wagers.get(this.currentDepth));
+
+
     }
 
     public int TakeTurn(GameState G) //for letting bots (and dealer) play

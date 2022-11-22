@@ -4,19 +4,30 @@ package com.mycompany.app;
 public class CardBank {
 
     public void fillDeck(){
-        for(int i : this.deck){
+        for(int i = 0; i<52 ; i++){
             this.deck[i] = no_of_decks;
         }
     }
 
+
+
     public void emptyDeck(){
-        for(int i : this.deck){
+        for(int i = 0; i<52 ; i++){
             this.deck[i] = 0;
         }
     }
 
+    public void updateCardinality()
+    {
+        this.cardinality = 0;
+        for(int i : this.deck)
+        {
+            this.cardinality = this.cardinality + i;
+        }
+    }
+
+    int cardinality;    //represents the number of cards in this deck
     int no_of_decks = 6;     //represents the total number of decks
-    int num_of_cards = 0;
     int[] deck = new int[52];           //Each index is a count for the number of cards of that type
     int temp = 0;
     /*

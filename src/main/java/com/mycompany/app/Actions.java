@@ -33,7 +33,7 @@ public class Actions {
 
         //takes in a deck (array) of cards and the bank and deals two card to the person from the bank. 
         Hit(deck, bank);
-        Hit(deck, bank);
+        Hit(deck, bank);       
     }
 
     public void Hit(CardBank deck, CardBank bank)
@@ -42,7 +42,8 @@ public class Actions {
         int target = findCard(bank);
         bank.deck[target]--;
         deck.deck[target]++;
-        
+        deck.updateCardinality();
+        bank.updateCardinality();
     }
 
     public int Split(CardBank deck)
@@ -63,13 +64,6 @@ public class Actions {
         }
 
         return targetCard;
-    }
-
-    public int Bet(int wager)
-    {
-        //used to increase the player's bet before the deal
-        //Person.setWager(50);
-        return 0; 
     }
 
     public int getCardVal(int index, int acesVal)
@@ -112,7 +106,6 @@ public class Actions {
                 count = count + miniStack;
             }
             
-            count = count + getCardVal(i,acesHigh);
         }
         if(count > 21)
         {
@@ -129,6 +122,7 @@ public class Actions {
             }
         }
         System.out.println("\tCounting passed with val " + count + "\n");
+        deck.updateCardinality();
         return count;
 
     }
@@ -147,6 +141,8 @@ public class Actions {
         }
         deck.deck[targetCard]++;
         bank.deck[targetCard]--;
+        deck.updateCardinality();
+        bank.updateCardinality();
     }
 
     
