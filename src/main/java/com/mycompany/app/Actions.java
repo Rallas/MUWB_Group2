@@ -18,9 +18,14 @@ public class Actions {
             {
                 acceptedTarget = currentTarget;
             }
-            currentTarget = rand.nextInt(52);
-        }
-        return acceptedTarget;
+            else
+            {
+                currentTarget = rand.nextInt(52);
+            }
+            
+         }
+        System.out.println("\tCurrent random card value of " + currentTarget);
+        return currentTarget;
     }
 
     public void Deal(CardBank deck, CardBank bank)
@@ -89,6 +94,7 @@ public class Actions {
                 val = 10;
             }
         }
+        System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
         return val;
     }
 
@@ -97,19 +103,32 @@ public class Actions {
         int[] stack = deck.deck;
         int count=0;
         int acesHigh = 1;
-        for(int i : stack)
-        {
+        int miniStack = 0;
+        for(int i =0; i<52;i++)
+         {
+            if(stack[i] > 0)
+            {
+                miniStack = stack[i] * getCardVal(i,acesHigh);
+                count = count + miniStack;
+            }
+            
             count = count + getCardVal(i,acesHigh);
         }
         if(count > 21)
         {
             count = 0;
             acesHigh = 0;
-            for(int i : stack)
+            for(int i =0; i<52;i++)
             {
-                count = count + getCardVal(i,acesHigh);
+                if(stack[i] > 0)
+                {
+                    miniStack = stack[i] * getCardVal(i,acesHigh);
+                    count = count + miniStack;
+                }
+
             }
         }
+        System.out.println("\tCounting passed with val " + count + "\n");
         return count;
 
     }

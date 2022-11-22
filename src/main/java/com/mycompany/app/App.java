@@ -160,31 +160,33 @@ public class App extends WebSocketServer {
       @Override
       public void run()
       {
-        for(GameState G : ActiveGames)
+        synchronized(this)
         {
-          for(Person P: G.participants)
+          for(GameState G : ActiveGames)
           {
-            if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+            for(Person P: G.participants)
             {
-              P.TakeTurn(G);
-              
+              if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+              {
+                P.TakeTurn(G);
+                
+              }
+              if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
+              {
+                P.timeOut++;
+              }
+              if(P.timeOut > 10)
+              {
+                P.type = PlayerType.BOTHIGH;
+                P.agression = 17;
+              }
             }
-            if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
-            {
-              P.timeOut++;
-            }
-            if(P.timeOut > 4)
-            {
-              P.type = PlayerType.BOTHIGH;
-              P.agression = 17;
-            }
+            packageAndBroadcast(G);
           }
-          packageAndBroadcast(G);
         }
-        
       }
     }
-    ,5*1000, 5*1000);
+    ,2*1000, 2*1000);
     
   }
     
