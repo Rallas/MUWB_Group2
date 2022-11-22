@@ -12,19 +12,14 @@ public class Actions {
         int currentTarget = -1;
         int acceptedTarget = -1;
         currentTarget = rand.nextInt(52);
-        
         while(acceptedTarget == -1)
         {
             if(stack.deck[currentTarget] > 0)
             {
                 acceptedTarget = currentTarget;
             }
-            else
-            {
-                currentTarget = rand.nextInt(52);
-            }
+            currentTarget = rand.nextInt(52);
         }
-        System.out.println("\tCurrent random card value of " + currentTarget);
         return acceptedTarget;
     }
 
@@ -65,6 +60,13 @@ public class Actions {
         return targetCard;
     }
 
+    public int Bet(int wager)
+    {
+        //used to increase the player's bet before the deal
+        //Person.setWager(50);
+        return 0; 
+    }
+
     public int getCardVal(int index, int acesVal)
     {
         int val = 0;
@@ -87,7 +89,6 @@ public class Actions {
                 val = 10;
             }
         }
-        System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
         return val;
     }
 
@@ -96,31 +97,19 @@ public class Actions {
         int[] stack = deck.deck;
         int count=0;
         int acesHigh = 1;
-        int miniStack = 0;
-        for(int i =0; i<52;i++)
+        for(int i : stack)
         {
-            if(stack[i] > 0)
-            {
-                miniStack = stack[i] * getCardVal(i,acesHigh);
-                count = count + miniStack;
-            }
-            
+            count = count + getCardVal(i,acesHigh);
         }
         if(count > 21)
         {
             count = 0;
             acesHigh = 0;
-            for(int i =0; i<52;i++)
+            for(int i : stack)
             {
-                if(stack[i] > 0)
-                {
-                    miniStack = stack[i] * getCardVal(i,acesHigh);
-                    count = count + miniStack;
-                }
-                
+                count = count + getCardVal(i,acesHigh);
             }
         }
-        System.out.println("\tCounting passed with val " + count + "\n");
         return count;
 
     }

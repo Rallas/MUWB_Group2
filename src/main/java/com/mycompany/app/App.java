@@ -49,7 +49,7 @@ import java.net.InetSocketAddress;
 //import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.Iterator;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
@@ -160,34 +160,31 @@ public class App extends WebSocketServer {
       @Override
       public void run()
       {
-        synchronized(this)
+        for(GameState G : ActiveGames)
         {
-          for(GameState G : ActiveGames)
+          for(Person P: G.participants)
           {
-            for(Iterator<Person> itP = G.participants.iterator(); itP.hasNext();)
+            if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
             {
-              Person P = itP.next();
-              if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
-              {
-                P.TakeTurn(G);
-                
-              }
-              if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
-              {
-                P.timeOut++;
-              }
-              if(P.timeOut > 10)
-              {
-                P.type = PlayerType.BOTHIGH;
-                P.agression = 17;
-              }
+              P.TakeTurn(G);
+              
             }
-            packageAndBroadcast(G);
+            if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
+            {
+              P.timeOut++;
+            }
+            if(P.timeOut > 4)
+            {
+              P.type = PlayerType.BOTHIGH;
+              P.agression = 17;
+            }
           }
+          packageAndBroadcast(G);
         }
+        
       }
     }
-    ,2*1000, 2*1000);
+    ,5*1000, 5*1000);
     
   }
     
