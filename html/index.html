@@ -28,19 +28,19 @@
 				<div class="Game_Play_Map">
 					Player 1: <br>
 					
-					<div class="Game_Play_Map_Cards" id="P1_Map"> </div>
+					<div class="Game_Play_Map_Cards" id="P0_Map"> </div>	<!--These are PlayerId - 1 due to game logic changes-->
 				</div>
 
 				<div class="Game_Play_Map"> Player 2: <br>
-					<div class="Game_Play_Map_Cards" id="P2_Map"> </div>
+					<div class="Game_Play_Map_Cards" id="P1_Map"> </div>
 				</div>
 
 				<div class="Game_Play_Map"> Player 3:
-					<div class="Game_Play_Map_Cards" id="P3_Map"> </div>
+					<div class="Game_Play_Map_Cards" id="P2_Map"> </div>
 				</div>
 
 				<div class="Game_Play_Map"> Player 4:
-					<div class="Game_Play_Map_Cards" id="P4_Map"> </div>
+					<div class="Game_Play_Map_Cards" id="P3_Map"> </div>
 				</div>
 
 
@@ -48,9 +48,6 @@
 					<div class="Game_Play_Map_Cards" id="DealerMap"></div>
 				</div>
 			</div>
-
-
-			<!-- Try to add a timer here -->
 		</div>
 		<center>
 			<div id="DealersCards_Background">
@@ -79,11 +76,13 @@
 		<div class=Action_Panel_Map>
 			<input type="button" id="BUTTON_3" class="buttons" value="DOUBLE DOWN" onclick=buttonclick(-5)></input>
 		</div>
-		<div class=Action_Panel_Map>
+		<!--<div class=Action_Panel_Map>
 			<input type="button" id="BUTTON_4" class="buttons" value="SURRENDER" onclick=buttonclick(-6)></input>
-		</div>
+		</div>-->
 		<div class=Action_Panel_Map>
-			<div id="countdown"></div>
+			<div id="countdown">
+				
+			</div>
 		</div>
 
 

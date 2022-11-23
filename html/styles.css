@@ -20,7 +20,7 @@ hr{
     width: 100%;
     border: solid;
     border-color: black;
-    border-width: 0.5px;  
+    border-width: 0px;  
 }
 
 .Game_Play_Map_Cards{
@@ -95,10 +95,6 @@ table{
     float: left;
 }
 
-#makeBet{
-    empty-cells: hide;
-}
-
 #Bet{
     height: 100px;
 }
@@ -118,7 +114,6 @@ table{
     width: 100%;
     border: none;
     text-align: center;
-    outline: none;
     font-size: 15px;
 }
 
@@ -133,13 +128,4 @@ content{
     width: 110px;
     text-align: top;
     background-color: lightgray;
-}
-
-td{
-    vertical-align: top;
-    text-align: center;
-}
-
-tr{
-    vertical-align: top;
 }
