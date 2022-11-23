@@ -166,7 +166,7 @@ public class App extends WebSocketServer {
           {
             for(Person P: G.participants)
             {
-              if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+              if((P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID))
               {
                 P.TakeTurn(G);
                 
@@ -174,6 +174,7 @@ public class App extends WebSocketServer {
               if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
               {
                 P.timeOut++;
+                packageAndBroadcast(G);
               }
               if(P.timeOut > 10)
               {
@@ -211,6 +212,7 @@ public class App extends WebSocketServer {
 
     // Get our Game Object
     GameState G = conn.getAttachment();
+    packageAndBroadcast(G);
     G.Update(U);
 
     // send out the game state every time
@@ -245,7 +247,7 @@ public class App extends WebSocketServer {
     String jsonString;
     jsonString = gson.toJson(G);
 
-    System.out.println(jsonString);
+    //System.out.println(jsonString);
     broadcast(jsonString);
   }
 

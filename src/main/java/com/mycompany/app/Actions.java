@@ -24,7 +24,7 @@ public class Actions {
             }
             
          }
-        System.out.println("\tCurrent random card value of " + currentTarget);
+        //System.out.println("\tCurrent random card value of " + currentTarget);
         return currentTarget;
     }
 
@@ -88,7 +88,7 @@ public class Actions {
                 val = 10;
             }
         }
-        System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
+        //System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
         return val;
     }
 
@@ -121,7 +121,7 @@ public class Actions {
 
             }
         }
-        System.out.println("\tCounting passed with val " + count + "\n");
+        //System.out.println("\tCounting passed with val " + count + "\n");
         deck.updateCardinality();
         return count;
 
