@@ -57,12 +57,13 @@ public class GameState {
 
     public void StartGame(Vector <Person> participants)
     {
-        Msg[0] = "StartGame: Await turn plr. 0";
-        Msg[1] = "StartGame: Await turn plr. 1";
-        Msg[2] = "StartGame: Await turn plr. 2";
-        Msg[3] = "StartGame: Await turn plr. 3";
-        Msg[4] = "StartGame: Await turn plr. 4";
-        Msg[5] = "StartGame: Await turn plr. 5";
+        this.participants = participants;
+        Msg[0] = "StartGame: Await turn plr. 1";
+        Msg[1] = "StartGame: Await turn plr. 2";
+        Msg[2] = "StartGame: Await turn plr. 3";
+        Msg[3] = "StartGame: Await turn plr. 4";
+        Msg[4] = "StartGame: Await turn plr. 5";
+        Msg[5] = "StartGame: Await turn plr. 6";
 
         //starts the gameloop
         //first, pads with bots
@@ -78,11 +79,7 @@ public class GameState {
 
         if(this.participants.size() < 3 && firstUnoccupied != -1)
         {
-            this.participants.add(new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
-        }
-        else
-        {
-            this.participants.add(new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), this.participants.size()));
+            this.participants.add(new Person( 6+rand.nextInt(15), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
         }
         for(Person P : participants)
         {
@@ -90,14 +87,7 @@ public class GameState {
             {
                 P.type = PlayerType.PLAYER;
             }
-            if(P.type != PlayerType.DEALER)
-            {
-                P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
-            }
-            else
-            {
-                P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-            }
+            
         }
         this.CurrentTurn = 0;        
 
@@ -106,152 +96,193 @@ public class GameState {
     //Reads in the user event, updates accordingly
     public int Update(UserEvent U)
     {
-        System.out.println("---------- NEW EVENT ------------\nThe User Event is " + U.PlayerId + "  " + U.Button);  
-        int isPlayer = 0;
-
-        System.out.println("\t\tCurrent Turn " + this.CurrentTurn + " of phase " + phase);
-        
-        
-        if(this.CurrentTurn > 6) // adjust state
+        synchronized(this)
         {
+            System.out.println("---------- NEW EVENT ------------\nThe User Event is " + U.PlayerId + "  " + U.Button);  
+            int isPlayer = 0;
+
+            System.out.println("\t\tCurrent Turn " + this.CurrentTurn + " of phase " + phase);
+
+            System.out.println("-------- CURRENT GAMESTATE ---------\n\n" + gson.toJson(this) + "\n\tEND OF GAMESTATE \n");
             
-            this.phase++;
-            this.CurrentTurn = 0;
-            System.out.println("---------------- ADJUST PHASE UP --------------- \n new phase : " + phase);
-        }
-
-        for(Person P : this.participants) //Ensures the current turn actually exists in the participants
-        {   
-            if(this.CurrentTurn == P.PlayerId)
+            
+            if(this.CurrentTurn > 6) // adjust state
             {
-                isPlayer = 1;
+                
+                this.phase++;
+                this.CurrentTurn = 0;
+                System.out.println("---------------- ADJUST PHASE UP --------------- \n new phase : " + phase);
             }
-        }
-        if(isPlayer == 0)
-        {
-            System.out.println("\tnon player found on id " + CurrentTurn);
-            this.CurrentTurn++;
-            return -1;
-        }     
 
-        if(phase == 2)
-        {
-            System.out.println("\n--------- Clean-up started! ---------\n");
-            this.Cleanup();
-            return 0;
-        }
-           
-        if(phase == 0) //have bets been collected?
-        {
-            this.Msg[this.CurrentTurn] = "Please Place a Bet";
-            for(Person P : this.participants)
-            {
-                if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
+            for(Person P : this.participants) //Ensures the current turn actually exists in the participants
+            {   
+                if(this.CurrentTurn == P.PlayerId && P.type != PlayerType.SPECTATOR)
                 {
-                    //match wager to minimum wager depth, toggle flag, then increment turn counter.
-                    System.out.println("wager made by " + P.PlayerId + " of " + U.Button);
-                    P.wagers.set(P.currentDepth,U.Button);
-                    this.Msg[this.CurrentTurn] = "Please await play";
-                    P.hasWagered = 1;
-                    this.CurrentTurn++;
-                    return 0;
+                    isPlayer = 1;
                 }
             }
-            
-        }//yes, proceed with play
-        else
-        if(phase == 1)
-        {
-                if(this.Msg[this.CurrentTurn] == "Please await play")
+            if(isPlayer == 0)
+            {
+                System.out.println("\tnon player found on id " + CurrentTurn);
+                this.CurrentTurn++;
+                return -1;
+            }     
+
+            if(phase == 2)
+            {
+                System.out.println("\n--------- Clean-up started! ---------\n");
+                this.Cleanup();
+
+                try
                 {
-                    this.Msg[this.CurrentTurn] = "It is your turn to play.";
+                    Thread.sleep(6000);
+
+                }
+                catch(InterruptedException e)
+                {
+                    Thread.currentThread().interrupt();
+                    System.out.println("SYSTEM INTERRUPTED DURING SLEEP");
                 }
 
-                //find player object to manipulate
-                for(Person P : participants)
+                return 0;
+            }
+            
+            if(phase == 0) //have bets been collected?
+            {
+                this.Msg[this.CurrentTurn] = "Please Place a Bet";
+                for(Person P : this.participants)
                 {
-                    if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
+                    if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR)
                     {
-                        P.timeOut = 0;
-                        if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
+                        //match wager to minimum wager depth, toggle flag, then increment turn counter.
+                        System.out.println("wager made by " + P.PlayerId + " of " + U.Button);
+                        if(U.Button > P.winnings)
                         {
-                            U.Button = -2;
-                            this.Msg[this.CurrentTurn] = "You've gone bust!";
+                            U.Button = P.winnings;
                         }
-                        // Move is legitimate, lets do what was requested
-                        switch(U.Button)
-                        {
-                            case -2: //stand case
-                            {
-                                if(P.currentDepth < P.splitDepth)
-                                {
-                                    P.currentDepth++;
-                                    this.Msg[this.CurrentTurn] = "Swapping to next hand...";
-                                    P.hasDoubled = 0;
-                                }
-                                else
-                                {
-                                    P.hasGone = 1;
-                                    Msg[this.CurrentTurn] = "Please await tally";
-                                    this.CurrentTurn++;
-                                    P.hasDoubled = 0;
-                                }
-                                break;
-                            }
-                            case -3: //hit
-                            {
-                                System.out.println("\n\nType " + P.type + " id " + P.PlayerId + " attempting hit.\n");
-                                System.out.println("\tp hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
-                                P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-                                System.out.println("\tp hand after hit: " + gson.toJson(P.hand.get(P.currentDepth)) + "\n\n");
-                                
-                                Msg[this.CurrentTurn] = "Hitting on this hand.";
-                                break;
-                            }
-                            case -4: //split
-                            {
-                                int targetForSplit = P.Split(P.hand.get(P.currentDepth));
-                                if(targetForSplit != -2)
-                                {
-                                    this.shoeBox.deck[targetForSplit]--;
-                                    P.addSplitdeck(targetForSplit);
-                                    this.Msg[this.CurrentTurn] = "Split found and divvied.";
-                                }
-                                break;
-                            }
-                            case -5: //double
-                            {
-                                if(P.hasDoubled == 0)
-                                {
-                                    P.wagers.set(P.currentDepth,(P.wagers.get(P.currentDepth))*2);
-                                    this.Msg[this.CurrentTurn] = "Wager on this hand doubled.";
-                                    P.hasDoubled = 1;
-                                }
-                                else
-                                {
-                                    this.Msg[this.CurrentTurn] = "You have already doubled on this hand!";
-                                }
-                                break;
-                            }
-                            case 99: //cheat hit
-                            {
-                                P.cheatHit(P.hand.get(P.currentDepth), this.shoeBox);
-                                this.Msg[this.CurrentTurn] = "Filthy cheat.";
-                                break;
-                            }
-                        }
-                        P.timeOut = 0;
+                        P.wagers.set(P.currentDepth,U.Button);
+                        this.Msg[this.CurrentTurn] = "Please await play";
                         
-                        return 0; //turn was taken
+                        P.timeOut = 0;
+                        if(P.type != PlayerType.DEALER && P.hasWagered == 0)
+                        {
+                            P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
+                        }
+                        else
+                        {
+                            P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+                        }
+                        P.hasWagered = 1;
+                        this.CurrentTurn++;
+                        return 0;
                     }
-                    //check to make sure there are players waiting. if not, cleanup
-                    
-                    
-                    
                 }
-            }
-        
-        return -1; //it's not your turn, or cleanup has concluded and nothing will recieve this
+                
+            }//yes, proceed with play
+            else
+            if(phase == 1)
+            {
+                    if(this.Msg[this.CurrentTurn] == "Please await play")
+                    {
+                        this.Msg[this.CurrentTurn] = "It is your turn to play.";
+                    }
+
+                    //find player object to manipulate
+                    for(Person P : participants)
+                    {
+                        if ((this.CurrentTurn == U.PlayerId) && (U.PlayerId == P.PlayerId) && P.type != PlayerType.SPECTATOR) 
+                        {
+                            P.timeOut = 0;
+                            if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
+                            {
+                                U.Button = -2;
+                                this.Msg[this.CurrentTurn] = "You've gone bust!";
+                            }
+                            if(P.count(P.hand.get(P.currentDepth)) == 21)//check for blackjack
+                            {
+                                U.Button = -2;
+                                this.Msg[this.CurrentTurn] = "BLACKJACK!";
+                            }
+                            // Move is legitimate, lets do what was requested
+                            switch(U.Button)
+                            {
+                                case -2: //stand case
+                                {
+                                    if(P.currentDepth < P.splitDepth)
+                                    {
+                                        P.currentDepth++;
+                                        this.Msg[this.CurrentTurn] = "Swapping to next hand...";
+                                        P.hasDoubled = 0;
+                                    }
+                                    else
+                                    {
+                                        P.hasGone = 1;
+                                        Msg[this.CurrentTurn] = "Please await tally";
+                                        this.CurrentTurn++;
+                                        P.hasDoubled = 0;
+                                    }
+                                    break;
+                                }
+                                case -3: //hit
+                                {
+                                    Msg[this.CurrentTurn] = "Hitting on this hand.";
+                                    System.out.println("\n\nType " + P.type + " id " + P.PlayerId + " attempting hit.\n");
+                                    System.out.println("\tp hand before hit: " + gson.toJson(P.hand.get(P.currentDepth)));
+                                    P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+                                    System.out.println("\tp hand after hit: " + gson.toJson(P.hand.get(P.currentDepth)) + "\n\n");
+                                    
+                                    
+                                    if(P.count(P.hand.get(P.currentDepth)) > 21)//check for bust
+                                    {
+                                        P.hasGone = 1;
+                                        Msg[this.CurrentTurn] = "You've gone bust!";
+                                        this.CurrentTurn++;
+                                        P.hasDoubled = 0; 
+                                    }
+                                    break;
+                                }
+                                case -4: //split
+                                {
+                                    int targetForSplit = P.Split(P.hand.get(P.currentDepth));
+                                    if(targetForSplit != -2)
+                                    {
+                                        P.hand.get(P.currentDepth).deck[targetForSplit]--;
+                                        P.addSplitdeck(targetForSplit);
+                                        this.Msg[this.CurrentTurn] = "Split found and divvied.";
+                                    }
+                                    break;
+                                }
+                                case -5: //double
+                                {
+                                    if(P.hasDoubled == 0)
+                                    {
+                                        P.wagers.set(P.currentDepth,(P.wagers.get(P.currentDepth))*2);
+                                        this.Msg[this.CurrentTurn] = "Wager on this hand doubled.";
+                                        P.hasDoubled = 1;
+                                    }
+                                    else
+                                    {
+                                        this.Msg[this.CurrentTurn] = "You have already doubled on this hand!";
+                                    }
+                                    break;
+                                }
+                                case 99: //cheat hit
+                                {
+                                    P.cheatHit(P.hand.get(P.currentDepth), this.shoeBox);
+                                    this.Msg[this.CurrentTurn] = "Filthy cheat.";
+                                    break;
+                                }
+                            }
+                            P.timeOut = 0;
+                            
+                            return 0; //turn was taken
+                        }       
+                        
+                    }
+                }
+            
+            return -1; //it's not your turn, or cleanup has concluded and nothing will recieve this
+        }
     }
 
     public synchronized void Cleanup()
@@ -267,15 +298,21 @@ public class GameState {
             {
 
                 totalHandVal = P.count(P.hand.get(i));
-                if(totalHandVal < 22 && totalHandVal > participants.firstElement().count(participants.firstElement().hand.get(0)) && P.type != PlayerType.DEALER)
+                if(totalHandVal == 21)
                 {
-                    P.winnings = P.winnings + (int)(P.wagers.get(i) * 1.5);
+                    P.winnings = P.winnings + (int)(P.wagers.get(i)*1.5);
+                    this.Msg[P.PlayerId] = "Hand won via Blackjack."; 
+                }
+                else
+                if(totalHandVal < 21 && totalHandVal > participants.firstElement().count(participants.firstElement().hand.get(0)) && P.type != PlayerType.DEALER)
+                {
+                    P.winnings = P.winnings + (int)(P.wagers.get(i));
                     this.Msg[P.PlayerId] = "Hand won.";
                 }
                 else
                 {
-                    this.piggybank = P.wagers.get(i);
-                    P.winnings = P.winnings - P.wagers.get(i);
+                    this.piggybank = (int)P.wagers.get(i);
+                    P.winnings = P.winnings - (int)P.wagers.get(i);
                     this.Msg[P.PlayerId] = "Hand lost.";
                 }
             }
@@ -291,22 +328,23 @@ public class GameState {
             P.wagers.clear();
             P.hand.add(new CardBank());
             P.wagers.add(0);
-            //eject players with no money 
+            //mark players with no money for ejection
             if(P.winnings < 1 && P.type != PlayerType.DEALER)
             {
 
-                it.remove();
+                P.hasBust = 1;
             }
             
         }
         //reset turn counter
         this.CurrentTurn = 0;
         this.phase = 0;
-        Msg[0] = "StartGame: Await turn plr. 0";
-        Msg[1] = "StartGame: Await turn plr. 1";
-        Msg[2] = "StartGame: Await turn plr. 2";
-        Msg[3] = "StartGame: Await turn plr. 3";
-        Msg[4] = "StartGame: Await turn plr. 4";
+        Msg[0] = "StartGame: Await turn plr. 1";
+        Msg[1] = "StartGame: Await turn plr. 2";
+        Msg[2] = "StartGame: Await turn plr. 3";
+        Msg[3] = "StartGame: Await turn plr. 4";
+        Msg[4] = "StartGame: Await turn plr. 5";
+        Msg[5] = "StartGame: Await turn plr. 6";
         //check the shoe
         checkShoe();
 
@@ -317,19 +355,11 @@ public class GameState {
             {
                 P.type = PlayerType.PLAYER;
             }
-            if(P.type != PlayerType.DEALER)
-            {
-                P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
-            }
-            else
-            {
-                P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
-            }
         }
         
     }
 
-    public int findFirstUnoccupied(GameState G)
+    synchronized public int findFirstUnoccupied(GameState G) //seeks and return first unocupied id
     {
         int firstID = -1;
         int[] isPresent = new int[6];
@@ -341,13 +371,16 @@ public class GameState {
         {
             isPresent[P.PlayerId] = 1;
         }
-        for(int i : isPresent)
+        for(int i =0; i<5;i++)
         {
             if(firstID == -1 && isPresent[i] == 0)
             {
-            firstID = i;
+                firstID = i;
             }
         }
+
+        System.out.println("first unoccupied requested. current state of ID:\n\t"+ gson.toJson(isPresent));
+        
         return firstID;
     }
 }

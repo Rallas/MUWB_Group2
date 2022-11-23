@@ -49,6 +49,7 @@ import java.net.InetSocketAddress;
 //import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -82,72 +83,81 @@ public class App extends WebSocketServer {
   
 
   @Override
-  public void onOpen(WebSocket conn, ClientHandshake handshake) {
-
-    System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
-
-    // search for a game needing a player
-    GameState G = null;
-
-    for (GameState i : ActiveGames) 
+  public void onOpen(WebSocket conn, ClientHandshake handshake) 
+  {
+    synchronized(this)
     {
-      if (i.participants.size() >= 1 && i.participants.size() < 5) 
+      System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+
+      // search for a game needing a player
+      GameState G = null;
+
+      for (GameState i : ActiveGames) 
       {
-        G = i;
-        System.out.println("found a match");
+        if (i.participants.size() >= 1 && i.participants.size() < 6) 
+        {
+          G = i;
+          System.out.println("found a match");
+        }
       }
-    }
 
-    // No matches ? Create a new Game.
-    int targetID;
-    if (G == null) 
-    {
-      G = new GameState();
-      G.GameId = GameId;
-      GameId++;
-      // Add the first player
-      G.participants.add(new Person(6,startWager,0));   
-      targetID = 1; 
-      ActiveGames.add(G);
-      System.out.println(" creating a new Game");
-      G.StartGame(G.participants);
-    } 
-    else 
-    {
-      //find first unoccupied ID
-      int firstID = G.findFirstUnoccupied(G);
-      if(firstID == -1)
+      // No matches ? Create a new Game.
+      int targetIndex;
+      if (G == null) 
       {
-        G.participants.add(new Person(6,startWager,G.participants.size()));
-        targetID = G.participants.size();
-        System.out.println(" not a new game, first empty ID at " + G.participants.size());
-      }
-      else
-      {
-        // join an existing game
         
-        G.participants.add(new Person(6,startWager,firstID));
-        targetID = firstID;
-        System.out.println(" not a new game, first empty ID at " + firstID);
+        G = new GameState();
+        G.GameId = GameId;
+        GameId++;
+        int firstID = G.findFirstUnoccupied(G);
+        // Add the first player
+        targetIndex = G.participants.size();
+        G.participants.add(new Person(6,startWager,firstID));   
+         
+        ActiveGames.add(G);
+        System.out.println(" creating a new Game");
+        G.StartGame(G.participants);
+      } 
+      else 
+      {
+        //find first unoccupied ID
+        int firstID = G.findFirstUnoccupied(G);
+        
+        if(firstID == -1)
+        {
+          targetIndex = G.participants.size();
+          G.participants.add(new Person(6,startWager,firstID));
+          
+          System.out.println(" not a new game, first empty ID at " + firstID);
+        }
+        else
+        {
+          // join an existing game
+          
+          targetIndex = G.participants.size();
+          G.participants.add(new Person(6,startWager,firstID));
+          
+          System.out.println(" not a new game, first empty ID at " + firstID);
+        }
+        
       }
-      
+      System.out.println("G.participants are " + G.participants);
+      // create an event to go to only the new player
+      ServerEvent E = new ServerEvent();
+      E.PlayerId = G.participants.get(targetIndex).PlayerId;
+      E.GameId = G.GameId;            
+      System.out.println("sending id " + E.PlayerId);
+      // allows the websocket to give us the Game when a message arrives
+      conn.setAttachment(G);
+
+      Gson gson = new Gson();
+      // Note only send to the single connection
+      conn.send(gson.toJson(E));
+      System.out.println(gson.toJson(E));
+
+      // The state of the game has changed, so lets send it to everyone
+      packageAndBroadcast(G);
     }
-    System.out.println("G.participants are " + G.participants);
-    // create an event to go to only the new player
-    ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.get(targetID).PlayerId;
-    E.GameId = G.GameId;            
-    System.out.println("sending id " + E.PlayerId);
-    // allows the websocket to give us the Game when a message arrives
-    conn.setAttachment(G);
-
-    Gson gson = new Gson();
-    // Note only send to the single connection
-    conn.send(gson.toJson(E));
-    System.out.println(gson.toJson(E));
-
-    // The state of the game has changed, so lets send it to everyone
-    packageAndBroadcast(G);
   }
 
   public void startTimers()
@@ -162,12 +172,15 @@ public class App extends WebSocketServer {
       {
         synchronized(this)
         {
-          for(GameState G : ActiveGames)
+          for(Iterator<GameState> itG = ActiveGames.iterator(); itG.hasNext();)
           {
-            for(Person P: G.participants)
+            GameState G = itG.next();
+            for(Iterator<Person> itP = G.participants.iterator(); itP.hasNext();)
             {
+              Person P = itP.next();
               if((P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID))
               {
+                packageAndBroadcast(G);
                 P.TakeTurn(G);
                 
               }
@@ -180,6 +193,11 @@ public class App extends WebSocketServer {
               {
                 P.type = PlayerType.BOTHIGH;
                 P.agression = 17;
+              }
+              if(P.hasBust == 1)
+              {
+                System.out.println("\tBROKE PLAYER REMOVED AT ID "+P.PlayerId);
+                itP.remove();
               }
             }
             packageAndBroadcast(G);
@@ -195,8 +213,22 @@ public class App extends WebSocketServer {
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     System.out.println(conn + " has closed");
     // Retrieve the game tied to the websocket connection
-    GameState G = conn.getAttachment();
-    G = null;
+    synchronized(this)
+    {
+      GameState G = conn.getAttachment();
+      int containsHuman=0;
+      for(Person P : G.participants)
+      {
+        if(P.type == PlayerType.PLAYER)
+        {
+          containsHuman = 1;
+        }
+      }
+      if(containsHuman == 0)
+      {
+        G = null;
+      }
+    }
   }
 
   @Override

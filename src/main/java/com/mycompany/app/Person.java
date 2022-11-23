@@ -18,6 +18,7 @@ public class Person extends Actions{
     int hasWagered = 0;
     int hasGone = 0; //starting to get ugly with flags- stinks
     int hasDoubled = 0;
+    int hasBust = 0;
 
     Person(){ //empty constructor for creating  scanners
         this.type = PlayerType.values()[1];
