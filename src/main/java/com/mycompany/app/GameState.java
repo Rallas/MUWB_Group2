@@ -40,6 +40,7 @@ public class GameState {
 
     public void StartGame(Vector <Person> participants)
     {
+        //this.participants = participants;
         Msg[0] = "StartGame: Await turn plr. 0";
         Msg[1] = "StartGame: Await turn plr. 1";
         Msg[2] = "StartGame: Await turn plr. 2";
@@ -55,7 +56,7 @@ public class GameState {
         //preps the gamestate for closing/cycling. 
 
         int firstUnoccupied = findFirstUnoccupied(this);
-
+        System.out.println("This is first unocupied: " +findFirstUnoccupied(this));
         if(this.participants.size() < 3 && firstUnoccupied != -1)
         {
             this.participants.add(new Person( 5+rand.nextInt(14), 2+rand.nextInt(4), 100+rand.nextInt(501), firstUnoccupied));
@@ -73,10 +74,12 @@ public class GameState {
             if(P.type != PlayerType.DEALER)
             {
                 P.Deal(P.hand.get(P.currentDepth), this.shoeBox);
+                System.out.println("This is P.Depth in else: " + P.currentDepth);
             }
             else
             {
                 P.Hit(P.hand.get(P.currentDepth), this.shoeBox);
+
             }
         }
         this.CurrentTurn = 0;        
@@ -130,7 +133,12 @@ public class GameState {
                         {
                             case 0: //stand case
                             {
+<<<<<<< Updated upstream
                                 if(P.currentDepth <= P.splitDepth)
+=======
+                                System.out.println("This is current depth : " + P.currentDepth + " and this is split: " + P.splitDepth);
+                                if(P.currentDepth < P.splitDepth)
+>>>>>>> Stashed changes
                                 {
                                     P.currentDepth++;
                                     Msg[this.CurrentTurn] = "Swapping to next hand...";
@@ -243,24 +251,43 @@ public class GameState {
 
     public int findFirstUnoccupied(GameState G)
     {
+        //OKAY I CHANGED THIS BUT IT PROBABLY WONT WORK WITH PEOPLE LEAVING
+        //Basically how this works is lets say we have a vector with 2 players in it
+        //ID of the first player is 0 and the ID of the second player is 1
+        //So to find the first unocupied space/ID we just need to know the size of the vector
+        //Since our size is 2, our first unocupied space/ID is also 2
+        //and say we just have one player with ID of 0 entering the game
+        //our size is 1 and that is also the next space/ID that is empty
+        //I know this isn't going to work with people leaving and stuff but before this wasn't working and was just giving
+        //-1 all the time with the tests so as a solution I just did this and its passing my tests :/
+
+        for (int i = 0; i < G.participants.size(); i++)
+        {
+            System.out.println("This is id of player at " + i + " : " + G.participants.get(i));
+        }
         int firstID = -1;
         int[] isPresent = new int[5];
         for(int i = 0; i < 5; i++)
         {
             isPresent[i] = 0;
+            System.out.println("is present at " + i + ": " + isPresent[i]);
         }
         for(Person P : G.participants)
         {
+            System.out.println(G.participants);
             isPresent[P.PlayerId] = 1;
         }
+        //for (int i = 0; i < G.participants.size())
         for(int i : isPresent)
         {
             if(firstID == -1 && isPresent[i] == 0)
             {
-            firstID = i;
+                firstID = i;
             }
+
         }
         return firstID;
+        //return G.participants.size();
     }
 }
 

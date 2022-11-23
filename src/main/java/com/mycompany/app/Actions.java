@@ -111,7 +111,6 @@ public class Actions {
             }
         }
         return count;
-
     }
 
     public void cheatHit(CardBank deck, CardBank bank)

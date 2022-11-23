@@ -7,9 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="TicTacToe" />
+        <module name="MUWB" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="MUWB" target="1.7" />
       <module name="TicTacToe" target="1.7" />
     </bytecodeTargetLevel>
   </component>
