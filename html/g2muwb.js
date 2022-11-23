@@ -117,6 +117,7 @@ connection.onmessage = function (evt) {             //message reciever
                     if (player.PlayerId == PlayerId)   //worked w/ == 1. What follows is the card generation sequence for OUR PLAYER
                     {
                         TimerUpdate(player);                    //draws the current time left for OUR PLAYER
+                        //New_Bet_Needed(player);
                         for (const hand of player.hand)
                         {    i = 0;                         //for going through each hand
                          
@@ -248,22 +249,21 @@ function buttonclick(i) {
     connection.send(JSON.stringify(U));             //Sends Dealer/Player Input to App?
     console.log(JSON.stringify(U));
 
-    var x = document.getElementById("makeBet");                 //hides the send bet interface after send is pressed
+    /*var x = document.getElementById("makeBet");                 //hides the send bet interface after send is pressed
     if (x.style.diplay === "none"){
         x.style.display = "block";
-    }else{
+    } else{
+    //if (x.style.display === "block") 
         x.style.display = "none";
-    }
+    }*/
 }
 
 function showBet(){
     var betInfo = document.getElementById("sendBet").value;
-    var betIndicator = document.querySelector("#Bet");
-    betIndicator.innerHTML = betInfo;
     buttonclick(betInfo);
 }
 
-function clearPrevCards(){
+function clearPrevCards(obj){
 
     var clear1 = document.getElementById("P1_Map");         //Clears OUR PLAYER CARD IMAGES  
     var clear2 = document.getElementById("P2_Map");       
@@ -289,17 +289,17 @@ function clearPrevCards(){
     clear7.innerHTML = "";
     }
 
-    var clear8 = document.getElementById("countdown");
+    var clear8 = document.getElementById("countdown");          //Clears the previous timer indication
     if (clear8 != null){
         clear8.innerHTML = "";
-    }  
+    }
 }
 
 function TimerUpdate(player){
     var Timer_Info = document.createElement("p");            //This handles drawing the divider to the side map
     Timer_Info.setAttribute("id", "Timer");
 
-    Timer_Info.innerHTML = "You have " + (20 - player.timeOut * 2) + " seconds remaining";
+    Timer_Info.innerHTML = "You have " + (20 - player.timeOut * 2) + " seconds remaining";          //20 is a hardcoded value based on Game Logic
 
     const Timer_Parent = document.getElementById("countdown");
     Timer_Parent.appendChild(Timer_Info);
