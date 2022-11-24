@@ -49,6 +49,7 @@ import java.net.InetSocketAddress;
 //import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.drafts.Draft;
@@ -82,72 +83,81 @@ public class App extends WebSocketServer {
   
 
   @Override
-  public void onOpen(WebSocket conn, ClientHandshake handshake) {
-
-    System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
-
-    // search for a game needing a player
-    GameState G = null;
-
-    for (GameState i : ActiveGames) 
+  public void onOpen(WebSocket conn, ClientHandshake handshake) 
+  {
+    synchronized(this)
     {
-      if (i.participants.size() >= 1 && i.participants.size() < 5) 
+      System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
+
+      // search for a game needing a player
+      GameState G = null;
+
+      for (GameState i : ActiveGames) 
       {
-        G = i;
-        System.out.println("found a match");
+        if (i.participants.size() >= 1 && i.participants.size() < 6) 
+        {
+          G = i;
+          System.out.println("found a match");
+        }
       }
-    }
 
-    // No matches ? Create a new Game.
-    int targetID;
-    if (G == null) 
-    {
-      G = new GameState();
-      G.GameId = GameId;
-      GameId++;
-      // Add the first player
-      G.participants.add(new Person(6,startWager,1));   
-      targetID = 1; 
-      ActiveGames.add(G);
-      System.out.println(" creating a new Game");
-      G.StartGame(G.participants);
-    } 
-    else 
-    {
-      //find first unoccupied ID
-      int firstID = G.findFirstUnoccupied(G);
-      if(firstID == -1)
+      // No matches ? Create a new Game.
+      int targetIndex;
+      if (G == null) 
       {
-        G.participants.add(new Person(6,startWager,G.participants.size()));
-        targetID = G.participants.size();
-        System.out.println(" not a new game, first empty ID at " + G.participants.size());
-      }
-      else
-      {
-        // join an existing game
         
-        G.participants.add(new Person(6,startWager,firstID));
-        targetID = firstID;
-        System.out.println(" not a new game, first empty ID at " + firstID);
+        G = new GameState();
+        G.GameId = GameId;
+        GameId++;
+        int firstID = G.findFirstUnoccupied(G);
+        // Add the first player
+        targetIndex = G.participants.size();
+        G.participants.add(new Person(6,startWager,firstID));   
+         
+        ActiveGames.add(G);
+        System.out.println(" creating a new Game");
+        G.StartGame(G.participants);
+      } 
+      else 
+      {
+        //find first unoccupied ID
+        int firstID = G.findFirstUnoccupied(G);
+        
+        if(firstID == -1)
+        {
+          targetIndex = G.participants.size();
+          G.participants.add(new Person(6,startWager,firstID));
+          
+          System.out.println(" not a new game, first empty ID at " + firstID);
+        }
+        else
+        {
+          // join an existing game
+          
+          targetIndex = G.participants.size();
+          G.participants.add(new Person(6,startWager,firstID));
+          
+          System.out.println(" not a new game, first empty ID at " + firstID);
+        }
+        
       }
-      
+      System.out.println("G.participants are " + G.participants);
+      // create an event to go to only the new player
+      ServerEvent E = new ServerEvent();
+      E.PlayerId = G.participants.get(targetIndex).PlayerId;
+      E.GameId = G.GameId;            
+      System.out.println("sending id " + E.PlayerId);
+      // allows the websocket to give us the Game when a message arrives
+      conn.setAttachment(G);
+
+      Gson gson = new Gson();
+      // Note only send to the single connection
+      conn.send(gson.toJson(E));
+      System.out.println(gson.toJson(E));
+
+      // The state of the game has changed, so lets send it to everyone
+      packageAndBroadcast(G);
     }
-    System.out.println("G.participants are " + G.participants);
-    // create an event to go to only the new player
-    ServerEvent E = new ServerEvent();
-    E.PlayerId = G.participants.get(targetID).PlayerId;
-    E.GameId = G.GameId;            
-    System.out.println("sending id " + E.PlayerId);
-    // allows the websocket to give us the Game when a message arrives
-    conn.setAttachment(G);
-
-    Gson gson = new Gson();
-    // Note only send to the single connection
-    conn.send(gson.toJson(E));
-    System.out.println(gson.toJson(E));
-
-    // The state of the game has changed, so lets send it to everyone
-    packageAndBroadcast(G);
   }
 
   public void startTimers()
@@ -160,31 +170,42 @@ public class App extends WebSocketServer {
       @Override
       public void run()
       {
-        for(GameState G : ActiveGames)
+        synchronized(this)
         {
-          for(Person P: G.participants)
+          for(Iterator<GameState> itG = ActiveGames.iterator(); itG.hasNext();)
           {
-            if(P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID)
+            GameState G = itG.next();
+            for(Iterator<Person> itP = G.participants.iterator(); itP.hasNext();)
             {
-              P.TakeTurn(G);
-              
+              Person P = itP.next();
+              if((P.type == PlayerType.DEALER || P.type == PlayerType.BOTCHEAT || P.type == PlayerType.BOTHIGH || P.type == PlayerType.BOTLOW || P.type == PlayerType.BOTMID))
+              {
+                packageAndBroadcast(G);
+                P.TakeTurn(G);
+                
+              }
+              if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
+              {
+                P.timeOut++;
+                packageAndBroadcast(G);
+              }
+              if(P.timeOut > 10)
+              {
+                P.type = PlayerType.BOTHIGH;
+                P.agression = 17;
+              }
+              if(P.hasBust == 1)
+              {
+                System.out.println("\tBROKE PLAYER REMOVED AT ID "+P.PlayerId);
+                itP.remove();
+              }
             }
-            if((G.CurrentTurn == P.PlayerId) && P.type == PlayerType.PLAYER)
-            {
-              P.timeOut++;
-            }
-            if(P.timeOut > 4)
-            {
-              P.type = PlayerType.BOTHIGH;
-              P.agression = 17;
-            }
+            packageAndBroadcast(G);
           }
-          packageAndBroadcast(G);
         }
-        
       }
     }
-    ,5*1000, 5*1000);
+    ,2*1000, 2*1000);
     
   }
     
@@ -192,8 +213,22 @@ public class App extends WebSocketServer {
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
     System.out.println(conn + " has closed");
     // Retrieve the game tied to the websocket connection
-    GameState G = conn.getAttachment();
-    G = null;
+    synchronized(this)
+    {
+      GameState G = conn.getAttachment();
+      int containsHuman=0;
+      for(Person P : G.participants)
+      {
+        if(P.type == PlayerType.PLAYER)
+        {
+          containsHuman = 1;
+        }
+      }
+      if(containsHuman == 0)
+      {
+        G = null;
+      }
+    }
   }
 
   @Override
@@ -209,6 +244,7 @@ public class App extends WebSocketServer {
 
     // Get our Game Object
     GameState G = conn.getAttachment();
+    packageAndBroadcast(G);
     G.Update(U);
 
     // send out the game state every time
@@ -238,21 +274,12 @@ public class App extends WebSocketServer {
 
   public void packageAndBroadcast(GameState G)
   {
-
-    //need to convert each vector to an array to facilitate processing in js
-    G.participantsDupe = G.participants.toArray(new Person[G.participants.size()]);
-    for(Person P : G.participants)
-    {
-      P.handDupe = P.hand.toArray(new CardBank[P.hand.size()]);
-      P.wagersDupe = P.wagers.toArray(new Integer[P.wagers.size()]);
-    }
-
     GsonBuilder builder = new GsonBuilder();
     Gson gson = builder.create();
     String jsonString;
     jsonString = gson.toJson(G);
 
-    System.out.println(jsonString);
+    //System.out.println(jsonString);
     broadcast(jsonString);
   }
 

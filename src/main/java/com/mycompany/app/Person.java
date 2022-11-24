@@ -17,14 +17,13 @@ public class Person extends Actions{
     int timeOut = 0;
     int hasWagered = 0;
     int hasGone = 0; //starting to get ugly with flags- stinks
+    int hasDoubled = 0;
+    int hasBust = 0;
 
-    CardBank[] handDupe;
-    Integer[] wagersDupe;
-
-    /*Person(){ //empty constructor for creating  scanners
+    Person(){ //empty constructor for creating  scanners
         this.type = PlayerType.values()[1];
     }
-
+    /* 
     Person(int ID){
         this.type = PlayerType.values()[1];
         this.PlayerId = ID;
@@ -66,7 +65,9 @@ public class Person extends Actions{
         newHand.deck[cardToSeed]++;
         this.splitDepth++;
         this.hand.add(newHand);
-        this.wagers.add(this.wagers.get(currentDepth));
+        this.wagers.add(this.wagers.get(this.currentDepth));
+
+
     }
 
     public int TakeTurn(GameState G) //for letting bots (and dealer) play
@@ -84,14 +85,14 @@ public class Person extends Actions{
             if(this.type == PlayerType.DEALER)
             {
                 System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
-                U.Button = 1;
+                U.Button = -3;
                 G.Update(U); //messy. Allows hit, but attempts to force it. Technically logically sound but don like it one bit
-                while(this.count(this.hand.get(currentDepth)) < 16 && myTurn == 1)
+                while(this.count(this.hand.get(this.currentDepth)) < 16 && myTurn == 1)
                 {
-                    U.Button = 1;
+                    U.Button = -3;
                     myTurn = G.Update(U);
                 }
-                U.Button = 0;
+                U.Button = -2;
                 myTurn = G.Update(U);
             }
             if(this.type == PlayerType.BOTCHEAT)
@@ -99,32 +100,32 @@ public class Person extends Actions{
                 System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
-                if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
+                if(this.count(this.hand.get(this.currentDepth))>8 && this.count(this.hand.get(this.currentDepth))<12)
                 {
-                    U.Button = 3;
+                    U.Button = -5;
                     myTurn = G.Update(U);
                 }
-                while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
+                while(this.count(this.hand.get(this.currentDepth)) < this.agression && myTurn == 1)
                 {
                     
-                    if(this.Split(this.hand.get(currentDepth)) > 0 && splitsRemaining > 0)
+                    if(this.Split(this.hand.get(this.currentDepth)) > 0 && splitsRemaining > 0)
                     {
                         splitsRemaining--;
-                        U.Button = 2;
+                        U.Button = -4;
                         myTurn = G.Update(U);
                     }
-                    if(rand.nextInt(3)<3) //even cheaters aren't perfect- 75% chance to 'cheat' a draw
+                    if(rand.nextInt(4)<3) //even cheaters aren't perfect- 75% chance to 'cheat' a draw
                     {
                         U.Button = 99; //special button code that corresponds to a 'cheat hit' --not present on the UI
                         myTurn = G.Update(U);
                     }
                     else
                     {
-                        U.Button = 1; //regular hit
+                        U.Button = -3; //regular hit
                         myTurn = G.Update(U);
                     }
                 }
-                U.Button = 0;
+                U.Button = -2;
                 myTurn = G.Update(U);
             }
             if(this.type == PlayerType.BOTHIGH)
@@ -132,24 +133,24 @@ public class Person extends Actions{
                 System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
-                if(this.count(this.hand.get(currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
+                if(this.count(this.hand.get(this.currentDepth))>8 && this.count(this.hand.get(currentDepth))<12)
                 {
-                    U.Button = 3;
+                    U.Button = -5;
                     myTurn = G.Update(U);
                 }
-                while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
+                while(this.count(this.hand.get(this.currentDepth)) < this.agression && myTurn == 1)
                 {
                     
-                    if(this.Split(this.hand.get(currentDepth)) > 0 && splitsRemaining > 0)
+                    if(this.Split(this.hand.get(this.currentDepth)) > 0 && splitsRemaining > 0)
                     {
                         splitsRemaining--;
-                        U.Button = 2;
+                        U.Button = -4;
                         myTurn = G.Update(U);
                     }
-                    U.Button = 1; //regular hit
+                    U.Button = -3; //regular hit
                     myTurn = G.Update(U);
                 }
-                U.Button = 0;
+                U.Button = -2;
                 myTurn = G.Update(U);
             }
             if(this.type == PlayerType.BOTMID)
@@ -157,19 +158,19 @@ public class Person extends Actions{
                 System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
-                while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
+                while(this.count(this.hand.get(this.currentDepth)) < this.agression && myTurn == 1)
                 {
                     
-                    if(this.Split(this.hand.get(currentDepth)) > 0 && splitsRemaining > 0)
+                    if(this.Split(this.hand.get(this.currentDepth)) > 0 && splitsRemaining > 0)
                     {
                         splitsRemaining--;
-                        U.Button = 2;
+                        U.Button = -4;
                         myTurn = G.Update(U);
                     }
-                    U.Button = 1; //regular hit
+                    U.Button = -3; //regular hit
                     myTurn = G.Update(U);
                 }
-                U.Button = 0;
+                U.Button = -2;
                 myTurn = G.Update(U);
             }
             if(this.type == PlayerType.BOTLOW)
@@ -177,12 +178,12 @@ public class Person extends Actions{
                 System.out.println("Type " + this.type + " id " + this.PlayerId + "taking turn.");
                 U.PlayerId = this.PlayerId;
                 U.GameId = G.GameId;
-                while(this.count(this.hand.get(currentDepth)) < this.agression && myTurn == 1)
+                while(this.count(this.hand.get(this.currentDepth)) < this.agression && myTurn == 1)
                 {
-                    U.Button = 1; //regular hit
+                    U.Button = -3; //regular hit
                     myTurn = G.Update(U);
                 }
-                U.Button = 0;
+                U.Button = -2;
                 myTurn = G.Update(U);
             }
             
