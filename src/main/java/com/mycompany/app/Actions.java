@@ -61,17 +61,22 @@ public class Actions {
             {
                 targetCard = i;
             }
-            if(deck.deck[i]==1)
+        }
+        if(targetCard == -2)
+        {
+            for(int i = 0; i<48;i++)
             {
-                for(int j =1; j <= 3;j++)
+                if(deck.deck[i]==1)
                 {
-                    if(targetCard == -2 && getCardVal(deck.deck[i+j],0) == getCardVal(deck.deck[i], 0) && deck.deck[i+j] >= 1)
+                    for(int j =1; j <= 3;j++)
                     {
-                        targetCard = i;
+                        if(targetCard == -2 && getCardVal(deck.deck[i+j],0) == getCardVal(deck.deck[i], 0) && deck.deck[i+j] >= 1)
+                        {
+                            targetCard = i;
+                        }
                     }
                 }
             }
-            
         }
 
         return targetCard;

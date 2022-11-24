@@ -118,15 +118,17 @@ connection.onmessage = function (evt) {             //message reciever
                     {
                         TimerUpdate(player);                    //draws the current time left for OUR PLAYER
                         //New_Bet_Needed(player);
-                        for (const hand of player.hand)
-                        {    i = 0;                         //for going through each hand
+                        for (let z = 0; z <= player.splitDepth; z++)
+                        {                            //for going through each hand
+                            
                          
-                            for(let z = 0; z <= player.currentDepth; z++)   //Adds dividers when necessary (Split Hands)
+                            for(const hand of player.hand)   //Adds dividers when necessary (Split Hands)
                             {
+                                i = 0; 
                                 for(const card in hand.deck)    //goes through each card per deck in each hand
                                 {          
                                     hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
-
+                                    console.log(" hand index = " + hand_index_count + " at i = " + i + " and z = " + z);
                                     if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
                                     {   
                                         while(hand_index_count > 0)//repeats to deal w/ multiples of 1 type of card
@@ -182,12 +184,13 @@ connection.onmessage = function (evt) {             //message reciever
                     }
                     else if (player.PlayerId != 5 && player.PlayerId != PlayerId)   //draws images for other players on our players side Map to show their hands
                     {
-                        for (const hand of player.hand)
+                        for (let z = 0; z <= player.splitDepth; z++)
                         {
-                            k = 0;
-
-                            for(let z = 0; z <= player.currentDepth; z++)           //Adds dividers when necessary (Split Hands)
+                            
+                            
+                            for(const hand of player.hand)           //Adds dividers when necessary (Split Hands)
                             {
+                                k = 0;
                                 for(const card in hand.deck) 
                                 {   
                                     hand_index_count = hand.deck[card];
