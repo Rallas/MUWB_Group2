@@ -10,13 +10,9 @@ public class Actions {
     {
         Random rand = new Random();
         int currentTarget = -1;
-        int acceptedTarget = -1;
-<<<<<<< Updated upstream
-        currentTarget = rand.nextInt(52);       // Hardcoded to 4 for testing hand splits GUI
-=======
+        int acceptedTarget = -1;    
         //currentTarget = rand.nextInt(52);
-        currentTarget = 4;
->>>>>>> Stashed changes
+        currentTarget = 4; // Hardcoded to 4 for testing hand splits GUI
         while(acceptedTarget == -1)
         {
             if(stack.deck[currentTarget] > 0)
