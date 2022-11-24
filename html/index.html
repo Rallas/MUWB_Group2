@@ -27,7 +27,7 @@
 				<hr>
 				<div class="Game_Play_Map">
 					Player 1: <br>
-					15
+					
 					<div class="Game_Play_Map_Cards" id="P1_Map"> </div>
 				</div>
 
@@ -44,13 +44,10 @@
 				</div>
 
 
-				<div class="Game_Play_Map">Dealer: <br> 20
+				<div class="Game_Play_Map">Dealer: <br> 
 					<div class="Game_Play_Map_Cards" id="DealerMap"></div>
 				</div>
 			</div>
-
-
-			<!-- Try to add a timer here -->
 		</div>
 		<center>
 			<div id="DealersCards_Background">
@@ -68,22 +65,24 @@
 		<center><b>Action Panel</b></center>
 		<hr>
 		<div class=Action_Panel_Map>
-			<input type="button" id = "BUTTON_0" class="buttons" value="STAND" onclick=buttonclick(0)></input>
+			<input type="button" id="BUTTON_0" class="buttons" value="STAND" onclick=buttonclick(-2)></input>
 		</div>
 		<div class=Action_Panel_Map>
-			<input type="button" id = "BUTTON_1" class="buttons" value="HIT" onclick=buttonclick(1)></input>
+			<input type="button" id="BUTTON_1" class="buttons" value="HIT" onclick=buttonclick(-3)></input>
 		</div>
 		<div class=Action_Panel_Map>
-			<input type="button" id = "BUTTON_2" class="buttons" value="SPLIT PAIRS" onclick=buttonclick(2)></input>
+			<input type="button" id="BUTTON_2" class="buttons" value="SPLIT PAIRS" onclick=buttonclick(-4)></input>
 		</div>
 		<div class=Action_Panel_Map>
-			<input type="button" id = "BUTTON_3" class="buttons" value="DOUBLE DOWN" onclick=buttonclick(3)></input>
+			<input type="button" id="BUTTON_3" class="buttons" value="DOUBLE DOWN" onclick=buttonclick(-5)></input>
 		</div>
+		<!--<div class=Action_Panel_Map>
+			<input type="button" id="BUTTON_4" class="buttons" value="SURRENDER" onclick=buttonclick(-6)></input>
+		</div>-->
 		<div class=Action_Panel_Map>
-			<input type="button" id = "BUTTON_4" class="buttons" value="SURRENDER" onclick=buttonclick(4)></input>
-		</div>
-		<div class=Action_Panel_Map>
-			<div id = "countdown"></div>
+			<div id="countdown">
+				
+			</div>
 		</div>
 
 
@@ -112,11 +111,14 @@
 			<center>Player: How much would you like to bet? <input id="sendBet" type="text"> <input type="submit"
 					name="sendBet" value="Bet" onclick="showBet()">
 		</div>
+		<div id="Bet">
+		</div>
 		</center>
 	</div>
 
 	<div id="winnings">
 		<b>Player's Total Holdings</b>
+		<hr>
 		<div>
 			<p id="winning"></p><br />
 		</div>

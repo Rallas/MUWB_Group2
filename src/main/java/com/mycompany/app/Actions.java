@@ -11,16 +11,21 @@ public class Actions {
         Random rand = new Random();
         int currentTarget = -1;
         int acceptedTarget = -1;
-        currentTarget = rand.nextInt(52);
+        currentTarget = rand.nextInt(52);       // Hardcoded to 4 for testing hand splits GUI
         while(acceptedTarget == -1)
         {
             if(stack.deck[currentTarget] > 0)
             {
                 acceptedTarget = currentTarget;
             }
-            currentTarget = rand.nextInt(52);
-        }
-        return acceptedTarget;
+            else
+            {
+                currentTarget = rand.nextInt(52);
+            }
+            
+         }
+        //System.out.println("\tCurrent random card value of " + currentTarget);
+        return currentTarget;
     }
 
     public void Deal(CardBank deck, CardBank bank)
@@ -28,7 +33,7 @@ public class Actions {
 
         //takes in a deck (array) of cards and the bank and deals two card to the person from the bank. 
         Hit(deck, bank);
-        Hit(deck, bank);
+        Hit(deck, bank);       
     }
 
     public void Hit(CardBank deck, CardBank bank)
@@ -37,7 +42,8 @@ public class Actions {
         int target = findCard(bank);
         bank.deck[target]--;
         deck.deck[target]++;
-        
+        deck.updateCardinality();
+        bank.updateCardinality();
     }
 
     public int Split(CardBank deck)
@@ -51,20 +57,24 @@ public class Actions {
         int targetCard = -2;
         for(int i = 0; i<52;i++)
         {
-            if(targetCard == -2 && deck.deck[i]>1)
+            if(targetCard == -2 && deck.deck[i] >1)
             {
                 targetCard = i;
             }
+            if(deck.deck[i]==1)
+            {
+                for(int j =1; j <= 3;j++)
+                {
+                    if(targetCard == -2 && getCardVal(deck.deck[i+j],0) == getCardVal(deck.deck[i], 0) && deck.deck[i+j] >= 1)
+                    {
+                        targetCard = i;
+                    }
+                }
+            }
+            
         }
 
         return targetCard;
-    }
-
-    public int Bet(int wager)
-    {
-        //used to increase the player's bet before the deal
-        //Person.setWager(50);
-        return 0; 
     }
 
     public int getCardVal(int index, int acesVal)
@@ -89,6 +99,7 @@ public class Actions {
                 val = 10;
             }
         }
+        //System.out.println("\tvalue requested for " + index + " at aces Val " + acesVal + " for value " + val + "\n");
         return val;
     }
 
@@ -97,19 +108,32 @@ public class Actions {
         int[] stack = deck.deck;
         int count=0;
         int acesHigh = 1;
-        for(int i : stack)
-        {
-            count = count + getCardVal(i,acesHigh);
+        int miniStack = 0;
+        for(int i =0; i<52;i++)
+         {
+            if(stack[i] > 0)
+            {
+                miniStack = stack[i] * getCardVal(i,acesHigh);
+                count = count + miniStack;
+            }
+            
         }
         if(count > 21)
         {
             count = 0;
             acesHigh = 0;
-            for(int i : stack)
+            for(int i =0; i<52;i++)
             {
-                count = count + getCardVal(i,acesHigh);
+                if(stack[i] > 0)
+                {
+                    miniStack = stack[i] * getCardVal(i,acesHigh);
+                    count = count + miniStack;
+                }
+
             }
         }
+        //System.out.println("\tCounting passed with val " + count + "\n");
+        deck.updateCardinality();
         return count;
 
     }
@@ -128,6 +152,8 @@ public class Actions {
         }
         deck.deck[targetCard]++;
         bank.deck[targetCard]--;
+        deck.updateCardinality();
+        bank.updateCardinality();
     }
 
     

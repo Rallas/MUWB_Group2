@@ -1,5 +1,5 @@
 var PlayerId = -1;
-var GameId = -1;
+var gameid = -1;
 class UserEvent {  
     Button = -1;
     PlayerId = 0;
@@ -19,271 +19,305 @@ connection.onclose = function (evt) {
     console.log("close");
     document.getElementById("topMessage").innerHTML = "Server Offline"
 }
+
 var i = 0;
 var j = 0;
-var player_card_count = 0;
-var dealer_card_count = 0;
-const UserTypeEventMap = new Map();
-UserTypeEventMap.set(-1, "DEAL");           //these need to be updated in the GameState switch
-UserTypeEventMap.set(-2, "STAND");
-UserTypeEventMap.set(-3, "HIT");
-UserTypeEventMap.set(-4, "SPLIT");
-UserTypeEventMap.set(-5, "DOUBLE");
-UserTypeEventMap.set(-6, "SURRENDER");
-
-
-
-const valid_choices = new Map();
-valid_choices.set(0, "Not Appropriate");
-valid_choices.set(1, "Valid Option");
-
-
-var TimeLeft = 60;
-//This is for the countdown which should probably be for the turns
-var Timer = setInterval(function(){
- if (TimeLeft <= 0){
-     clearInterval(Timer);
-     //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
-     //connection.close(); This is annoying to deal w/ after a while
- }
- else{
-     document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
- }
- TimeLeft = TimeLeft - 1;
-}, 1000);
-
-cards_generated = 0;
+var k = 0;
+var hand_index_count = 0;
+var dealer_cards_generated = 0;
 
 connection.onmessage = function (evt) {             //message reciever
     var msg;
     msg = evt.data;
-    //active = false;
     console.log("Message received: " + msg);
     const obj = JSON.parse(msg);                //this makes obj the parsed json string object
 
-    if(!('Turn_Cycle' in obj)){                  //this means the obj was a ServerEvent 
-        if (obj.PlayerId == "0") {
-            PlayerId = 0;
-        }
-        else {
+    if(!('CurrentTurn' in obj)){                  //this means the obj was a Server Event 
+        
+        if (PlayerId != 5){
             PlayerId = obj.PlayerId;
-        }
-
+        }      
         gameid = obj.GameId;
-        console.log("A ServerEvent was recieved & you are now Player: " + PlayerId + " in a game\n")
+        console.log("A ServerEvent was recieved && you are now Player: " + PlayerId + " in a game\n")
     }
-    else if ('CurrentTurn' in obj) {                //this is for when the sent msg is a Game class object
-        // only pay attention to this game
-        if (gameid == obj.GameId) {
-            var k = 0;
-            TimeLeft = 60;  
-            console.log("A GameState was recieved: " + obj + "\n")
+    else if ('CurrentTurn' in obj)                 //this is for when the sent msg is a Game class object
+    {   console.log("A GameState was recieved: " + obj + "\n")
+ 
+        clearPrevCards();
 
-            // button states can be lit up or shaded to display current player turn options
-            for (button of obj.Button){    
-                if (button == 1){
-                    var Button_ID = "BUTTON_" + k;
-                    var Btn = document.getElementById(Button_ID);
-                    Btn.style.backgroundColor = 'lightgreen';
-                    k++;
-                }
-                else{
-                    var Button_ID = "BUTTON_" + k;
-                    var Btn = document.getElementById(Button_ID);
-                    Btn.style.backgroundColor = "#841311" ;
-                    k++;
-                }
-            }
-        }
+        if (gameid == obj.GameId)                     // only pay attention to this game
+        {      
+            for (const player of obj.participants)             // process the game state
+            {                   
+                if (player.PlayerId == 5)           //Dealer card image generation sequence
+                {  
+                    console.log("\nEntered DEALER CARD GEN ROUTINE\n");
+                    dealer_cards_generated = 0;
 
-            // process the game state
-            for (const player of obj.participants) {
-               
-                if (player.PlayerId != 0) {                //shows the cards for all players
+                    for(const hand of player.hand)
+                    {   j = 0;
 
-                    if (player.PlayerId == PlayerId){               //shows cards for our Players            
-                        i = 0;
-                        cards_generated = 0;
-                        for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
-                            for(const card of player.hand.deck) {       //cycles through the hand for our Player
-                                cardcount = card;
-                                
-                                if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
+                        for(const card in hand.deck)             //See Person Card generation sequence below for detailed explanation
+                        {                      
+                            hand_index_count = hand.deck[card];
 
-                                        while(cardcount > 0)
-                                        {
-                                        var filename = i + ".svg";
-                                        var element = "card" + (i + 1);
-                                        var PlayerMapId = "P" + PlayerId + "_Map"; 
+                            if (hand_index_count > 0)     //NOTE: HARCODED FOR TESTING PURPOSES
+                            {    
 
-                                        var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                while(hand_index_count > 0)
+                                {
+                                    var filename = j + ".svg";
+
+                                    if (dealer_cards_generated == 1 && obj.CurrentTurn == 1)            //Makes Dealers second card face down but only on first turn
+                                    {
+                                        filename = "BLACK_BACK_CARD.svg";
+                                        var img = document.createElement("img");
                                         img.setAttribute("src", filename);
-                                        img.setAttribute("class", "PlayersCards");
-                                        const MainParent = document.getElementById("PlayersCards_Generated_Here");
-                                        MainParent.appendChild(img);
-
-                                        var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                        img.setAttribute("class", "DealersCards");
+                                        const parent = document.getElementById("DealersCards_Generated_Here");
+                                        parent.appendChild(img);
+                        
+                                        var img_for_map = document.createElement("img");            //This else subroutine draws the dealers cards
                                         img_for_map.setAttribute("src", filename);
                                         img_for_map.setAttribute("class", "Game_Play_Map_Cards");
 
-                                        const MapParent = document.getElementById(PlayerMapId);
+                                        const MapParent = document.getElementById("DealerMap");
                                         MapParent.appendChild(img_for_map);
-                                        
-                                        cardcount--;
-                                        cards_generated++;
-                                        }
-                                        i++;
-                                }
-                                i++;
-                            }  // each card         
-                        }
-                            TimeLeft = 60;
-                            Timer = setInterval(function(){
-                                if (TimeLeft <= 0){
-                                    clearInterval(Timer);
-                                    //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
-                                    //connection.close(); This is annoying to deal w/ after a while
-                                }
-                                else{
-                                    document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
-                                }
-                                TimeLeft = TimeLeft - 1;
-                            }, 1000);
-
-                            document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId]; // the message line. This returns a message to the current player after the turn. Goes w/ GameID check
-                            var winnings_info = document.querySelector("#winning");
-                            winnings_info.innerHTML = player.winnings;
-                    }
-                    else if (player.PlayerId != PlayerId){      
-                        i = 0;
-                        cards_generated = 0;
-                        for (const hand of player.hand) {  //NOTE: needed for vector hand implementation
-                            for(const card of player.hand.deck) {
-                                cardcount = card;
-                                    
-                                if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
-                                    while(cardcount > 0){
-                                        var filename = i + ".svg";
-                                        var element = "card" + (i + 1);
-                                        var PlayerMapId = "P" + PlayerId + "_Map"; 
-
-                                        var img = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                                        img.setAttribute("src", filename);
-                                        img.setAttribute("class", "Game_Play_Map_Cards");
-
-                                        const MapParenti = document.getElementById(PlayerMapId);
-                                        MapParenti.appendChild(img);
-
-                                        cardcount--;
-                                        cards_generated++;
                                     }
-                                i++;
-                                }
-                            i++;
-                            }
-                        }
-                }       
-                else {                          //Dealer Card Generation
-                    j = 0;
-                    cards_generated = 0;
-                    for (const hand of player.hand){ 
-                        for(const card of player.hand.deck) {
-                            cardcount = card;
-                            if (cardcount > 0 && cards_generated < player.hand.num_of_cards){
-                                while(cardcount > 0){
-                                    var filename = j + ".svg";
-                                    var element = "card" + (j + 1);
+                                    else{
+                                        var img = document.createElement("img");
+                                        img.setAttribute("src", filename);
+                                        img.setAttribute("class", "DealersCards");
+                                        const parent = document.getElementById("DealersCards_Generated_Here");
+                                        parent.appendChild(img);
+                        
+                                        var img_for_map = document.createElement("img");            //This else subroutine draws the dealers cards
+                                        img_for_map.setAttribute("src", filename);
+                                        img_for_map.setAttribute("class", "Game_Play_Map_Cards");
 
-                                    var img = document.createElement("img");
-                                    img.setAttribute("src", filename);
-                                    img.setAttribute("class", "DealersCards");
-                                    const parent = document.getElementById("DealersCards_Generated_Here");
-                                    parent.appendChild(img);
-                    
-                                    var img_for_map = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                                    img_for_map.setAttribute("src", filename);
-                                    img_for_map.setAttribute("class", "Game_Play_Map_Cards");
-
-                                    const MapParent = document.getElementById("DealerMap");
-                                    MapParent.appendChild(img_for_map);
-                                    
-                                    cardcount--;
-                                    cards_generated++;
+                                        const MapParent = document.getElementById("DealerMap");
+                                        MapParent.appendChild(img_for_map);
+                                    }
+                                    hand_index_count--;
+                                    dealer_cards_generated++;
                                 }
                                 j++;
                             }
-                        j++;
+                            else{
+                                j++;
+                            }
                         }
-                    document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId];
+                    }
+                    document.getElementById("topMessage").innerHTML = obj.Msg[player.PlayerId]; // the message line. This returns a message to the current player
                     var winnings_info = document.querySelector("#winning");
-                    winnings_info.innerHTML = player.winnings;
-                    } 
-                }
-            } 
-        } 
-    }
-    Timer_Stop(Timer);
-}
+                    winnings_info.innerHTML = obj.piggybank;                                               //to represent the DEALERS worth
+                }                       //<- marks the end of the dealer card drawing routine
+                else if (player.PlayerId != 5)       //shows cards for our player & maps the other players cards to the side view 
+                { 
+                    if (player.PlayerId == PlayerId)   //What follows is the card generation sequence for OUR PLAYER
+                    {
+                        TimerUpdate(player);                    //draws the current time left for OUR PLAYER
+                        for (const hand of player.hand)
+                        {                            //for going through each hand
+                            ClearMainCards();
+                            
+                            console.log("The hand is: " + hand.deck);
+                            for(let z = player.currentDepth; z <= player.splitDepth; z++)   //Adds dividers when necessary (Split Hands)
+                            {   
+                                i = 0;
+                                for(const card in hand.deck)    //goes through each card per deck in each hand
+                                {          
+                                    hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
+                                    console.log("FOR CARD IN HAND.DECK: The hand_i_count is: " + hand_index_count + " for i value: " + i);
+
+                                    if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
+                                    {   
+                                        while(hand_index_count > 0)//repeats to deal w/ multiples of 1 type of card
+                                        {   
+                                            var filename = i + ".svg";                                  //Card graphics are numbered from 0 - 51
+                                            var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                            var img_4_player = document.createElement("img");            //creates a new graphic for each card
+                                            img_4_player.setAttribute("src", filename); 
+                                            img_4_player.setAttribute("class", "PlayersCards");         
+                                            const MainParent = document.getElementById("PlayersCards_Generated_Here");
+                                            MainParent.appendChild(img_4_player);
+
+                                            var img_for_map_4_player = document.createElement("img");            //This handles drawing each card to the side map
+                                            img_for_map_4_player.setAttribute("src", filename);
+                                            img_for_map_4_player.setAttribute("class", "Game_Play_Map_Cards");
+
+                                            const MapParent_4_player = document.getElementById(PlayerMapId);
+                                            MapParent_4_player.appendChild(img_for_map_4_player);
+                                            console.log("FOR CARD IN HAND.DECK, WHILE: The hand_i_count is: " + hand_index_count + " for i value: " + i);
+                                            hand_index_count--; //lowers the index by 1 each time a card is printed
+                                        }
+                                        i++;            //the cycle var should be incremented every time 1 type of card is printed
+                                    }
+                                    else{                   
+                                        i++;                //for when i isn't greater than 0
+                                    }
+                                }         //this ends the loop for generating player cards
+
+                                var Our_Player_Hash_info = document.querySelector("#PlayersHashInfo");
+                                Our_Player_Hash_info.innerHTML = 5; //player.hand.hand_total; 
+                                document.getElementById("Bet").innerHTML = player.wagers[z]; // shows the player their hands worth
+                            }
+                        }         
+                        document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId]; // the message line. This returns a message to the current player after the turn. Goes w/ GameID check
+                        var winnings_info = document.querySelector("#winning");
+                        winnings_info.innerHTML = player.winnings;
+                    }
+                    else if (player.PlayerId != 5 && player.PlayerId != PlayerId)   //draws images for other players on our players side Map to show their hands
+                    {
+                        for (const hand of player.hand)
+                        {
+                            k = 0;
+
+                            for(let z = 0; z <= player.splitDepth; z++)           //Adds dividers when necessary (Split Hands)
+                            {
+                                for(const card in hand.deck) 
+                                {   
+                                    hand_index_count = hand.deck[card];
+
+                                    if (hand_index_count > 0)          
+                                    {
+                                        while(hand_index_count > 0)
+                                        {
+                                            var filename_side_map = k + ".svg";
+                                            var PlayerMapId = "P" + player.PlayerId + "_Map"; 
+
+                                            var img_wrt_others = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                            img_wrt_others.setAttribute("src", filename_side_map);
+                                            img_wrt_others.setAttribute("class", "Game_Play_Map_Cards");
+
+                                            const MapParenti = document.getElementById(PlayerMapId);
+                                            MapParenti.appendChild(img_wrt_others);
+
+                                            hand_index_count--;
+                                        }
+                                        k++;
+                                    }
+                                    else{
+                                        k++;
+                                    }
+                                }
+                                /*if (z > 0){
+                                    var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
+                                    var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                    var Map_4_Player_Divider_others = document.createElement("img");            //This handles drawing the divider to the side map
+                                    Map_4_Player_Divider_others.setAttribute("src", filename);
+                                    Map_4_Player_Divider_others.setAttribute("class", "Game_Play_Map_Cards_divider");
+
+                                    const MapParent_4_Others = document.getElementById(PlayerMapId);
+                                    MapParent_4_Others.appendChild(Map_4_Player_Divider_others);
+                                }*/
+                            }   
+                        }       
+                    }               // <- for the end of the else branch to generate a players side cards on our PLAYERS display
+                }              // <- indicates the end of the player card generation sequence       
+            }               // <- is for the end of cycling through the vector of players in our game
+        }                  // <- is for the end of the subroutine for this specific game (it ignores the other games)
+    }              // <- is for the end of the game process sub routine  
+}           // <- is for the end of the onconnection function
 
 
 function buttonclick(i) {
-    Timer_Stop(Timer);
-    TimeLeft = 240;
     U = new UserEvent();            //makes an event to represent the input of a player action
     U.PlayerId = PlayerId;
     U.GameId = gameid;
-    if (i > 6){
+    if (i >= 0){
         U.Event = "BET";
         U.Button = document.getElementById("sendBet").value;
     }
     else{
-        U.Event = UserTypeEventMap.get(i);
         U.Button = i;   
     }
     connection.send(JSON.stringify(U));             //Sends Dealer/Player Input to App?
     console.log(JSON.stringify(U));
-
-    var x = document.getElementById("makeBet");                 //hides the send bet interface after send is pressed
-    if (x.style.diplay === "none"){
-        x.style.display = "block";
-    }else{
-        x.style.display = "none";
-    }
-}
-
-var coll = document.getElementsByClassName("collapse");
-var i;
-
-for (i = 0; i < coll.length; i++){
-    coll[i].addEventListener("click", function(){
-        this.classList.toggle("active");
-        var content = this.nextElementSibling;
-        if (content.style.display === "block"){
-            content.style.display = "none";
-        }else{
-            content.style.display = "block";
-        }
-    });
 }
 
 function showBet(){
     var betInfo = document.getElementById("sendBet").value;
-    var betIndicator = document.querySelector("#Bet");
-    betIndicator.innerHTML = betInfo;
     buttonclick(betInfo);
 }
-function Timer_Fun(TimeLeft){
-    if (TimeLeft <= 0){
-        clearInterval(Timer);
-        //window.alert("AND you're outta Time! Thanks for Playing & Buh Bye");
-        //connection.close(); This is annoying to deal w/ after a while
+
+function clearPrevCards(obj){
+
+    var clear1 = document.getElementById("P1_Map");         //Clears OUR PLAYER CARD IMAGES  
+    var clear2 = document.getElementById("P2_Map");       
+    var clear3 = document.getElementById("P3_Map");       
+    var clear4 = document.getElementById("P0_Map");       
+    var clear5 = document.getElementById("DealerMap");       
+
+    if (clear1 != null && clear2 != null && clear3 != null && clear4 != null && clear5 != null)
+    {
+    clear1.innerHTML = "";
+    clear2.innerHTML = "";
+    clear3.innerHTML = "";
+    clear4.innerHTML = "";
+    clear5.innerHTML = "";
     }
-    else{
-        document.getElementById("countdown").innerHTML = TimeLeft + " seconds left in this turn"
+
+    var clear6 = document.getElementById("DealersCards_Generated_Here");         //Clears DEALER CARD MAIN DISPLAY IMAGES
+    var clear7 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD MAIN DISPLAY IMAGES    
+
+    if (clear6 != null && clear7 != null)
+    {
+    clear6.innerHTML = "";
+    clear7.innerHTML = "";
     }
-    TimeLeft = TimeLeft - 1;
+
+    var clear8 = document.getElementById("countdown");          //Clears the previous timer indication
+    if (clear8 != null){
+        clear8.innerHTML = "";
+    }
 }
 
-function Timer_Stop(Timer){
-    clearInterval(Timer);
+function ClearMainCards(){
+    var clear8 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD MAIN DISPLAY IMAGES    
+    var clear9 = document.getElementById("P0_Map");       
+
+    if (clear8 != null && clear9 != null)
+    {
+        clear8.innerHTML = "";
+        clear9.innerHTML = "";
+    }
 }
+
+function TimerUpdate(player){
+    var Timer_Info = document.createElement("p");            //This handles drawing the divider to the side map
+    Timer_Info.setAttribute("id", "Timer");
+
+    var c = player.timeOut;
+
+    if (c <= 10){
+        Timer_Info.innerHTML = "You have " + (20 - player.timeOut * 2) + " seconds remaining";          //20 is a hardcoded value based on Game Logic
+    }
+    else{
+        Timer_Info.innerHTML = "And you're a bot now. Nice";         
+    }
+
+    const Timer_Parent = document.getElementById("countdown");
+    Timer_Parent.appendChild(Timer_Info);
+}
+
+
+                                /*if (z > 0){
+                                    var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
+                                    var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                    var Hand_Divider = document.createElement("img");           //draws our cards for the main display
+                                    Hand_Divider.setAttribute("src", filename); 
+                                    Hand_Divider.setAttribute("class", "PlayersCards_divider");         
+                                    const MainParent_4_Divider = document.getElementById("PlayersCards_Generated_Here");
+                                    MainParent_4_Divider.appendChild(Hand_Divider);
+
+                                    var Map_4_Player_Divider = document.createElement("img");            //This handles drawing the divider to the side map
+                                    Map_4_Player_Divider.setAttribute("src", filename);
+                                    Map_4_Player_Divider.setAttribute("class", "Game_Play_Map_Cards_divider");
+
+                                    const MapParent_4_Our_Player = document.getElementById(PlayerMapId);        
+                                    MapParent_4_Our_Player.appendChild(Map_4_Player_Divider);
+                                }*/

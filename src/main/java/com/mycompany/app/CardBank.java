@@ -4,25 +4,51 @@ package com.mycompany.app;
 public class CardBank {
 
     public void fillDeck(){
-        for(int i : this.deck){
+        for(int i = 0; i<52 ; i++){
             this.deck[i] = no_of_decks;
         }
     }
 
+
+
     public void emptyDeck(){
-        for(int i : this.deck){
+        for(int i = 0; i<52 ; i++){
             this.deck[i] = 0;
         }
     }
 
-    int no_of_decks = 6;     //represents the total number of decks
-    int num_of_cards = 0;
-    int[] deck = new int[52];           //Each index is a count for the number of cards of that type
-    
-    public void addCard(int a) {
-        deck [a] = deck[a] + 1;
-        num_of_cards++;
+    public void updateCardinality()
+    {
+        this.cardinality = 0;
+        for(int i : this.deck)
+        {
+            this.cardinality = this.cardinality + i;
+        }
     }
+
+    public void updateHandTotal()
+    {
+        this.hand_total = 0;
+        for(int i : this.deck)
+        {
+            if (deck[i] > 0){
+
+                if (i != 0){
+                    temp = (int)Math.ceil(i / 4);
+                    hand_total = hand_total + temp;
+                }
+                else{
+                    hand_total = hand_total + 1;            //half covers Ace of Clubs
+                }
+            }
+
+        }
+    }
+    int hand_total = 0;
+    int cardinality;    //represents the number of cards in this deck
+    int no_of_decks = 6;     //represents the total number of decks
+    int[] deck = new int[52];           //Each index is a count for the number of cards of that type
+    int temp = 0;
     /*
     Kind and Suite are represented by index.
 

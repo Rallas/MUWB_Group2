@@ -1,15 +1,16 @@
 package com.mycompany.app;
-import java.util.Random;
-
 
 public class Card {         //THIS CLASS IS OBSOLETE AS IT"S BEEN REPLACED BY CARDBANK
+
     public int value;
-    Random rand = new Random();
-    
-    public Card() { 
-        int upperbound = 52;
+
+    public Card() {
+        int lowerbound = 0;               
+        int upperbound = 50;
+        int temp;
+        temp = (int)Math.floor(Math.random()*(upperbound-lowerbound+1) + lowerbound);      //"randomly" assigns a value between (inclusive) 1 & 11
         
-        value = rand.nextInt(upperbound);   //generates a random int from 0 - 51 reflective of a card
+        this.value = temp;
 
     }
 }
