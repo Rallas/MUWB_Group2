@@ -117,6 +117,7 @@ connection.onmessage = function (evt) {             //message reciever
                     if (player.PlayerId == PlayerId)   //What follows is the card generation sequence for OUR PLAYER
                     {
                         TimerUpdate(player);                    //draws the current time left for OUR PLAYER
+<<<<<<< Updated upstream
                         for (const hand of player.hand)
                         {                            //for going through each hand
                             ClearMainCards();
@@ -129,6 +130,22 @@ connection.onmessage = function (evt) {             //message reciever
                                 {          
                                     hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
                                     console.log("FOR CARD IN HAND.DECK: The hand_i_count is: " + hand_index_count + " for i value: " + i);
+=======
+
+                        for (const hand of player.hand)
+                        {                             //for going through each hand
+                            console.log("The hand is: " + hand.deck);
+                            ClearOurPlayersCard();
+                            for(let z = 0; z <= player.splitDepth; z++)   //Adds dividers when necessary (Split Hands)
+                            {   i = 0;
+                                ClearOurPlayersCard();
+
+
+                                for(const card in hand.deck)    //goes through each card per deck in each hand
+                                {          
+                                    hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
+                                    console.log("FOR CARD IN HAND.DECK: The hand_i_count is: " + hand_index_count + " for i value: " + i + " & Z is: " + z);
+>>>>>>> Stashed changes
 
                                     if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
                                     {   
@@ -149,7 +166,11 @@ connection.onmessage = function (evt) {             //message reciever
 
                                             const MapParent_4_player = document.getElementById(PlayerMapId);
                                             MapParent_4_player.appendChild(img_for_map_4_player);
+<<<<<<< Updated upstream
                                             console.log("FOR CARD IN HAND.DECK, WHILE: The hand_i_count is: " + hand_index_count + " for i value: " + i);
+=======
+                                            console.log("FOR CARD IN HAND.DECK, WHILE: The hand_i_count is: " + hand_index_count + " for i value: " + i + " AND Z is: " + z);
+>>>>>>> Stashed changes
                                             hand_index_count--; //lowers the index by 1 each time a card is printed
                                         }
                                         i++;            //the cycle var should be incremented every time 1 type of card is printed
@@ -159,8 +180,28 @@ connection.onmessage = function (evt) {             //message reciever
                                     }
                                 }         //this ends the loop for generating player cards
 
+<<<<<<< Updated upstream
                                 var Our_Player_Hash_info = document.querySelector("#PlayersHashInfo");
                                 Our_Player_Hash_info.innerHTML = 5; //player.hand.hand_total; 
+=======
+                               /* if (z > 0){
+                                    var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
+                                    var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                    var Hand_Divider = document.createElement("img");           //draws our cards for the main display
+                                    Hand_Divider.setAttribute("src", filename); 
+                                    Hand_Divider.setAttribute("class", "PlayersCards_divider");         
+                                    const MainParent_4_Divider = document.getElementById("PlayersCards_Generated_Here");
+                                    MainParent_4_Divider.appendChild(Hand_Divider);
+
+                                    var Map_4_Player_Divider = document.createElement("img");            //This handles drawing the divider to the side map
+                                    Map_4_Player_Divider.setAttribute("src", filename);
+                                    Map_4_Player_Divider.setAttribute("class", "Game_Play_Map_Cards_divider");
+
+                                    const MapParent_4_Our_Player = document.getElementById(PlayerMapId);        
+                                    MapParent_4_Our_Player.appendChild(Map_4_Player_Divider);
+                                }*/
+>>>>>>> Stashed changes
                                 document.getElementById("Bet").innerHTML = player.wagers[z]; // shows the player their hands worth
                             }
                         }         
@@ -174,7 +215,11 @@ connection.onmessage = function (evt) {             //message reciever
                         {
                             k = 0;
 
+<<<<<<< Updated upstream
                             for(let z = 0; z <= player.splitDepth; z++)           //Adds dividers when necessary (Split Hands)
+=======
+                            for(let z = player.currentDepth; z <= player.splitDepth; z++)           //Adds dividers when necessary (Split Hands)
+>>>>>>> Stashed changes
                             {
                                 for(const card in hand.deck) 
                                 {   
@@ -275,6 +320,7 @@ function clearPrevCards(obj){
     }
 }
 
+<<<<<<< Updated upstream
 function ClearMainCards(){
     var clear8 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD MAIN DISPLAY IMAGES    
     var clear9 = document.getElementById("P0_Map");       
@@ -283,6 +329,15 @@ function ClearMainCards(){
     {
         clear8.innerHTML = "";
         clear9.innerHTML = "";
+=======
+function ClearOurPlayersCard(){
+    var clear9 = document.getElementById("PlayersCards_Generated_Here");         //Clears OUR PLAYER CARD MAIN DISPLAY IMAGES    
+    var clear10 = document.getElementById("P0_Map");
+    if (clear9 != null && clear10 != null)
+    {
+    clear9.innerHTML = "";
+    clear10.innerHTML = "";
+>>>>>>> Stashed changes
     }
 }
 
