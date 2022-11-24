@@ -140,7 +140,6 @@ public class Actions {
         //System.out.println("\tCounting passed with val " + count + "\n");
         deck.updateCardinality();
         return count;
-
     }
 
     public void cheatHit(CardBank deck, CardBank bank)
