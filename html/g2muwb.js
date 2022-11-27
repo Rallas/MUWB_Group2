@@ -29,7 +29,7 @@ var dealer_cards_generated = 0;
 connection.onmessage = function (evt) {             //message reciever
     var msg;
     msg = evt.data;
-    console.log("Message received: " + msg);
+    //console.log("Message received: " + msg);
     const obj = JSON.parse(msg);                //this makes obj the parsed json string object
 
     if(!('CurrentTurn' in obj)){                  //this means the obj was a Server Event 
@@ -38,10 +38,10 @@ connection.onmessage = function (evt) {             //message reciever
             PlayerId = obj.PlayerId;
         }      
         gameid = obj.GameId;
-        console.log("A ServerEvent was recieved && you are now Player: " + PlayerId + " in a game\n")
+        console.log("You are now Player: " + PlayerId + " in game: " + gameid + "\n")
     }
     else if ('CurrentTurn' in obj)                 //this is for when the sent msg is a Game class object
-    {   console.log("A GameState was recieved: " + obj + "\n")
+    {   //console.log("A GameState was recieved: " + obj + "\n")
  
         clearPrevCards();
 
@@ -51,7 +51,7 @@ connection.onmessage = function (evt) {             //message reciever
             {                   
                 if (player.PlayerId == 5)           //Dealer card image generation sequence
                 {  
-                    console.log("\nEntered DEALER CARD GEN ROUTINE\n");
+                    //console.log("\nEntered DEALER CARD GEN ROUTINE\n");
                     dealer_cards_generated = 0;
 
                     for(const hand of player.hand)
@@ -117,64 +117,64 @@ connection.onmessage = function (evt) {             //message reciever
                     if (player.PlayerId == PlayerId)   //worked w/ == 1. What follows is the card generation sequence for OUR PLAYER
                     {
                         TimerUpdate(player);                    //draws the current time left for OUR PLAYER
-                        //New_Bet_Needed(player);
-                        for (const hand of player.hand)
-                        {    i = 0;                         //for going through each hand
-                         
-                            for(let z = 0; z <= player.currentDepth; z++)   //Adds dividers when necessary (Split Hands)
-                            {
-                                for(const card in hand.deck)    //goes through each card per deck in each hand
-                                {          
-                                    hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
-
-                                    if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
+                        //New_Bet_Needed(player);                        
+                            
+                        z = 0;
+                        for(const hand of player.hand)   //Adds dividers when necessary (Split Hands),  for going through each hand
+                        {    
+                            i = 0;
+                            for(const card in hand.deck)    //goes through each card per deck in each hand
+                            {          
+                                hand_index_count = hand.deck[card]    //copies array index count value to HIC so it can be decremented in the case of duplicates
+                                //console.log(" hand index = " + hand_index_count + " at i = " + i + " and z = " + z);
+                                if (hand_index_count > 0)  //if the index count is < 0 we have a card of this type & need to print it
+                                {   
+                                    while(hand_index_count > 0)//repeats to deal w/ multiples of 1 type of card
                                     {   
-                                        while(hand_index_count > 0)//repeats to deal w/ multiples of 1 type of card
-                                        {   
-                                            var filename = i + ".svg";                                  //Card graphics are numbered from 0 - 51
-                                            var PlayerMapId = "P" + PlayerId + "_Map";                 
+                                        var filename = i + ".svg";                                  //Card graphics are numbered from 0 - 51
+                                        var PlayerMapId = "P" + PlayerId + "_Map";                 
 
-                                            var img_4_player = document.createElement("img");            //creates a new graphic for each card
-                                            img_4_player.setAttribute("src", filename); 
-                                            img_4_player.setAttribute("class", "PlayersCards");         
-                                            const MainParent = document.getElementById("PlayersCards_Generated_Here");
-                                            MainParent.appendChild(img_4_player);
+                                        var img_4_player = document.createElement("img");            //creates a new graphic for each card
+                                        img_4_player.setAttribute("src", filename); 
+                                        img_4_player.setAttribute("class", "PlayersCards");         
+                                        const MainParent = document.getElementById("PlayersCards_Generated_Here");
+                                        MainParent.appendChild(img_4_player);
 
-                                            var img_for_map_4_player = document.createElement("img");            //This handles drawing each card to the side map
-                                            img_for_map_4_player.setAttribute("src", filename);
-                                            img_for_map_4_player.setAttribute("class", "Game_Play_Map_Cards");
+                                        var img_for_map_4_player = document.createElement("img");            //This handles drawing each card to the side map
+                                        img_for_map_4_player.setAttribute("src", filename);
+                                        img_for_map_4_player.setAttribute("class", "Game_Play_Map_Cards");
 
-                                            const MapParent_4_player = document.getElementById(PlayerMapId);
-                                            MapParent_4_player.appendChild(img_for_map_4_player);
+                                        const MapParent_4_player = document.getElementById(PlayerMapId);
+                                        MapParent_4_player.appendChild(img_for_map_4_player);
 
-                                            hand_index_count--; //lowers the index by 1 each time a card is printed
-                                        }
-                                        i++;            //the cycle var should be incremented every time 1 type of card is printed
+                                        hand_index_count--; //lowers the index by 1 each time a card is printed
                                     }
-                                    else{                   
-                                        i++;                //for when i isn't greater than 0
-                                    }
-                                }         //this ends the loop for generating player cards
-
-                                if (z > 0){
-                                    var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
-                                    var PlayerMapId = "P" + PlayerId + "_Map";                 
-
-                                    var Hand_Divider = document.createElement("img");           //draws our cards for the main display
-                                    Hand_Divider.setAttribute("src", filename); 
-                                    Hand_Divider.setAttribute("class", "PlayersCards_divider");         
-                                    const MainParent_4_Divider = document.getElementById("PlayersCards_Generated_Here");
-                                    MainParent_4_Divider.appendChild(Hand_Divider);
-
-                                    var Map_4_Player_Divider = document.createElement("img");            //This handles drawing the divider to the side map
-                                    Map_4_Player_Divider.setAttribute("src", filename);
-                                    Map_4_Player_Divider.setAttribute("class", "Game_Play_Map_Cards_divider");
-
-                                    const MapParent_4_Our_Player = document.getElementById(PlayerMapId);        
-                                    MapParent_4_Our_Player.appendChild(Map_4_Player_Divider);
+                                    i++;            //the cycle var should be incremented every time 1 type of card is printed
                                 }
-                                document.getElementById("Bet").innerHTML = player.wagers[z]; // shows the player their hands worth
+                                else{                   
+                                    i++;                //for when i isn't greater than 0
+                                }
+                            }         //this ends the loop for generating player cards
+
+                            if (player.splitDepth > 0 && z != player.splitDepth){
+                                var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
+                                var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                var Hand_Divider = document.createElement("img");           //draws our cards for the main display
+                                Hand_Divider.setAttribute("src", filename); 
+                                Hand_Divider.setAttribute("class", "PlayersCards_divider");         
+                                const MainParent_4_Divider = document.getElementById("PlayersCards_Generated_Here");
+                                MainParent_4_Divider.appendChild(Hand_Divider);
+
+                                var Map_4_Player_Divider = document.createElement("img");            //This handles drawing the divider to the side map
+                                Map_4_Player_Divider.setAttribute("src", filename);
+                                Map_4_Player_Divider.setAttribute("class", "Game_Play_Map_Cards_divider");
+
+                                const MapParent_4_Our_Player = document.getElementById(PlayerMapId);        
+                                MapParent_4_Our_Player.appendChild(Map_4_Player_Divider);
                             }
+                            document.getElementById("Bet").innerHTML = player.wagers[z]; // shows the player their hands worth
+                            z++;
                         }         
                         document.getElementById("topMessage").innerHTML = obj.Msg[PlayerId]; // the message line. This returns a message to the current player after the turn. Goes w/ GameID check
                         var winnings_info = document.querySelector("#winning");
@@ -182,50 +182,48 @@ connection.onmessage = function (evt) {             //message reciever
                     }
                     else if (player.PlayerId != 5 && player.PlayerId != PlayerId)   //draws images for other players on our players side Map to show their hands
                     {
-                        for (const hand of player.hand)
+                        z = 0;       
+                        for(const hand of player.hand)           //Adds dividers when necessary (Split Hands)
                         {
                             k = 0;
+                            for(const card in hand.deck) 
+                            {   
+                                hand_index_count = hand.deck[card];
 
-                            for(let z = 0; z <= player.currentDepth; z++)           //Adds dividers when necessary (Split Hands)
-                            {
-                                for(const card in hand.deck) 
-                                {   
-                                    hand_index_count = hand.deck[card];
-
-                                    if (hand_index_count > 0)          
+                                if (hand_index_count > 0)          
+                                {
+                                    while(hand_index_count > 0)
                                     {
-                                        while(hand_index_count > 0)
-                                        {
-                                            var filename_side_map = k + ".svg";
-                                            var PlayerMapId = "P" + player.PlayerId + "_Map"; 
+                                        var filename_side_map = k + ".svg";
+                                        var PlayerMapId = "P" + player.PlayerId + "_Map"; 
 
-                                            var img_wrt_others = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
-                                            img_wrt_others.setAttribute("src", filename_side_map);
-                                            img_wrt_others.setAttribute("class", "Game_Play_Map_Cards");
+                                        var img_wrt_others = document.createElement("img");            //This if & else branch are responsible for drawing game state cards
+                                        img_wrt_others.setAttribute("src", filename_side_map);
+                                        img_wrt_others.setAttribute("class", "Game_Play_Map_Cards");
 
-                                            const MapParenti = document.getElementById(PlayerMapId);
-                                            MapParenti.appendChild(img_wrt_others);
+                                        const MapParenti = document.getElementById(PlayerMapId);
+                                        MapParenti.appendChild(img_wrt_others);
 
-                                            hand_index_count--;
-                                        }
-                                        k++;
+                                        hand_index_count--;
                                     }
-                                    else{
-                                        k++;
-                                    }
+                                    k++;
                                 }
-                                if (z > 0){
-                                    var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
-                                    var PlayerMapId = "P" + PlayerId + "_Map";                 
-
-                                    var Map_4_Player_Divider_others = document.createElement("img");            //This handles drawing the divider to the side map
-                                    Map_4_Player_Divider_others.setAttribute("src", filename);
-                                    Map_4_Player_Divider_others.setAttribute("class", "Game_Play_Map_Cards_divider");
-
-                                    const MapParent_4_Others = document.getElementById(PlayerMapId);
-                                    MapParent_4_Others.appendChild(Map_4_Player_Divider_others);
+                                else{
+                                    k++;
                                 }
-                            }   
+                            }
+                            if (player.splitDepth > 0 && z != player.splitDepth){
+                                var filename = "Hand_Bar.svg";                                  //Graphic Generation sequcnce for hand dividers
+                                var PlayerMapId = "P" + PlayerId + "_Map";                 
+
+                                var Map_4_Player_Divider_others = document.createElement("img");            //This handles drawing the divider to the side map
+                                Map_4_Player_Divider_others.setAttribute("src", filename);
+                                Map_4_Player_Divider_others.setAttribute("class", "Game_Play_Map_Cards_divider");
+
+                                const MapParent_4_Others = document.getElementById(PlayerMapId);
+                                MapParent_4_Others.appendChild(Map_4_Player_Divider_others);
+                            }
+                            z++;
                         }       
                     }               // <- for the end of the else branch to generate a players side cards on our PLAYERS display
                 }              // <- indicates the end of the player card generation sequence       
@@ -247,15 +245,7 @@ function buttonclick(i) {
         U.Button = i;   
     }
     connection.send(JSON.stringify(U));             //Sends Dealer/Player Input to App?
-    console.log(JSON.stringify(U));
-
-    /*var x = document.getElementById("makeBet");                 //hides the send bet interface after send is pressed
-    if (x.style.diplay === "none"){
-        x.style.display = "block";
-    } else{
-    //if (x.style.display === "block") 
-        x.style.display = "none";
-    }*/
+    //console.log(JSON.stringify(U));
 }
 
 function showBet(){
