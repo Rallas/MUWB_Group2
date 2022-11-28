@@ -43,10 +43,11 @@ connection.onmessage = function (evt) {             //message reciever
     else if ('CurrentTurn' in obj)                 //this is for when the sent msg is a Game class object
     {   //console.log("A GameState was recieved: " + obj + "\n")
 
-        clearPrevCards();
+        
 
         if (gameid == obj.GameId)                     // only pay attention to this game
         {
+            clearPrevCards();
             for (const player of obj.participants)             // process the game state
             {
                 if (player.PlayerId == 5)           //Dealer card image generation sequence

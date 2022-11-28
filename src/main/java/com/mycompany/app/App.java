@@ -94,7 +94,7 @@ public class App extends WebSocketServer {
 
       for (GameState i : ActiveGames) 
       {
-        if (i.participants.size() >= 1 && i.participants.size() < 6) 
+        if (i.participants.size() >= 1 && i.participants.size() < 5) 
         {
           G = i;
           System.out.println("found a match");
