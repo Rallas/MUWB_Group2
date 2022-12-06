@@ -199,7 +199,7 @@ public class Person extends Actions{
             else
             {
                 System.out.println("Type " + this.type + " id " + this.PlayerId + " making wager.");
-                U.Button = (this.winnings * 1/3) + rand.nextInt(this.winnings * 2/3);
+                U.Button = (this.winnings * 1/3) + rand.nextInt(this.winnings * 4/3);
             }
             myTurn = G.Update(U);
         }

@@ -83,10 +83,10 @@ public class App extends WebSocketServer {
   
 
   @Override
-  public void onOpen(WebSocket conn, ClientHandshake handshake) 
+  synchronized public void onOpen(WebSocket conn, ClientHandshake handshake) 
   {
-    synchronized(this)
-    {
+    
+    
       System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " connected");
 
       // search for a game needing a player
@@ -157,7 +157,7 @@ public class App extends WebSocketServer {
 
       // The state of the game has changed, so lets send it to everyone
       packageAndBroadcast(G);
-    }
+    
   }
 
   public void startTimers()
@@ -168,10 +168,10 @@ public class App extends WebSocketServer {
     timer.scheduleAtFixedRate(new TimerTask() 
     {
       @Override
-      public void run()
+      synchronized public void run()
       {
-        synchronized(this)
-        {
+        
+        
           for(Iterator<GameState> itG = ActiveGames.iterator(); itG.hasNext();)
           {
             GameState G = itG.next();
@@ -202,7 +202,7 @@ public class App extends WebSocketServer {
             }
             packageAndBroadcast(G);
           }
-        }
+        
       }
     }
     ,2*1000, 2*1000);

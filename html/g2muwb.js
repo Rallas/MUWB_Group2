@@ -29,7 +29,7 @@ var dealer_cards_generated = 0;
 connection.onmessage = function (evt) {             //message reciever
     var msg;
     msg = evt.data;
-    //console.log("Message received: " + msg);
+    console.log("Message received: " + msg);
     const obj = JSON.parse(msg);                //this makes obj the parsed json string object
 
     if(!('CurrentTurn' in obj)){                  //this means the obj was a Server Event
@@ -41,7 +41,7 @@ connection.onmessage = function (evt) {             //message reciever
         console.log("You are now Player: " + PlayerId + " in game: " + gameid + "\n")
     }
     else if ('CurrentTurn' in obj)                 //this is for when the sent msg is a Game class object
-    {   //console.log("A GameState was recieved: " + obj + "\n")
+    {   console.log("A GameState was recieved: " + obj + "\n")
 
         
 
